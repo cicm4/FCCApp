@@ -98,7 +98,7 @@ class _UserRegisterState extends State<UserRegister> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Phone',
+                                  'Telefono',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,

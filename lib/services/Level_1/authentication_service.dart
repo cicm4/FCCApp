@@ -33,8 +33,9 @@ class AuthService {
       // Check if the user is in the database
       bool isUserInDB = await _isUserInDB(uid: us.user?.uid);
       // If the user is not found in the database, add them
-      if (isUserInDB == false) {
-        await _addNewUserToDB();
+
+      if (!isUserInDB) {
+        return 'No se encontró el usuario en la base de datos';
       }
       // If the sign-in process is successful, return true
       return true;
@@ -149,10 +150,15 @@ class AuthService {
         'isReady': false,
       };
 
+      var scholarship = {
+        'uid': uid,
+        'gid': gid,
+      };
+
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
 
       await dbs.addEntryToDBWithName(
-          path: 'scholarships', entry: {'uid': uid}, name: uid);
+          path: 'scholarships', entry: scholarship, name: uid);
 
       await dbs.addEntryToDBWithName(
           path: 'calendars', entry: newCalendar, name: uid);

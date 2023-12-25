@@ -2,6 +2,7 @@ import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/Level_1/admin_service.dart';
 import 'package:fccapp/services/Level_1/authentication_service.dart';
+import 'package:fccapp/services/level_2/scholarships_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -15,12 +16,24 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isAdmin = false;
+  late ScholarshipService scholarshipService;
+  num scholarshipStatus = 0;
 
   @override
   initState() {
     super.initState();
     // Call the checkAdmin function on widget creation
     checkAdmin();
+    initScholarshipService();
+  }
+
+  Future<void> initScholarshipService() async {
+    scholarshipService =
+        await ScholarshipService.create(userService: UserService());
+    scholarshipStatus = scholarshipService.getStatusNum();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void checkAdmin() {
@@ -67,7 +80,25 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Add some spacing
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                // Call your sign-out function here
+                Navigator.pushNamed(context, '/scholarshipsHome');
+              },
+              child: const Text(
+                'becas',
+                style: TextStyle(
+                  fontSize: 14, // Making text small
+                  color: Colors.blue, // Text color blue
+                  decoration: TextDecoration.underline, // Underlined text
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            LinearProgressIndicator(
+              value: scholarshipStatus / 4,
+            ), // Add some spacing
           ],
         ),
       ),
