@@ -35,6 +35,6 @@ class AdminService {
   static Future<bool> isAdmin(
       {required UserService userService, required DBService dbService}) async {
     return await dbService.isDataInDB(
-        data: userService.user?.uid, path: 'admin');
+        data: userService.user?.uid, path: 'admins');
   }
 }

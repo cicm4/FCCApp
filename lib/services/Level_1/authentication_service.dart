@@ -2,7 +2,6 @@ import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 /// This class is responsible for handling user authentication using Firebase.
 class AuthService {
@@ -71,24 +70,56 @@ class AuthService {
 
   /// Sign out the current user.
   ///
-  /// This method signs out the current user from the google service.
   /// This method then signs out the current user from the Firebase instance.
   static signOut() async {
     try {
-      //sign out of google
-      GoogleSignIn().signOut();
+      await FirebaseAuth.instance.signOut();
     } catch (e) {
       if (kDebugMode) {
-        print(e.toString());
+        print(e);
       }
     }
-    await FirebaseAuth.instance.signOut();
   }
 
-  /// Add a new user to the database.
+  /// Adds a new user to the database.
   ///
-  /// This private method adds a new user to the database with their uid, email, displayName, photoUrl, and type.
-  Future<void> _addNewUserToDB({String? name}) async {
+  /// This method creates a new user document and a new calendar document in the database.
+  /// It also adds an entry to the 'scholarships' collection for the new user.
+  ///
+  /// The new user document is added to the 'users' collection, and the new calendar document
+  /// is added to the 'calendars' collection. The 'scholarships' entry is added to the 'scholarships' collection.
+  ///
+  /// The user document contains the following fields:
+  /// * 'uid': the user's unique ID
+  /// * 'email': the user's email address
+  /// * 'displayName': the user's display name
+  /// * 'photoUrl': the URL of the user's profile photo
+  /// * 'type': the user's type (always 'donor')
+  /// * 'phone': the user's phone number
+  /// * 'sport': the user's sport
+  /// * 'gid': the user's GID
+  /// * 'location': the user's location
+  /// * 'cid': the ID of the user's calendar
+  ///
+  /// The calendar document contains the following fields:
+  /// * 'uid': the user's unique ID
+  /// * 'cid': the ID of the calendar
+  /// * 'isReady': a boolean indicating whether the calendar is ready (always false)
+  ///
+  /// The 'scholarships' entry contains the following field:
+  /// * 'uid': the user's unique ID
+  ///
+  /// The [name], [phone], [sport], [gid], and [location] parameters are optional and can be null.
+  /// If [name] is null, the user's display name is used as the name.
+  /// If [phone], [sport], [gid], or [location] is null, the corresponding field in the user document is left empty.
+  ///
+  /// Throws an exception if an error occurs while adding the documents to the database.
+  Future<void> _addNewUserToDB(
+      {String? name,
+      String? phone,
+      String? sport,
+      String? gid,
+      String? location}) async {
     try {
       UserService us = UserService();
       String? uid = us.user!.uid;
@@ -107,9 +138,24 @@ class AuthService {
         'displayName': displayName,
         'photoUrl': photoUrl,
         'type': type,
+        'phone': phone,
+        'sport': sport,
+        'gid': gid,
+        'location': location,
+      };
+
+      var newCalendar = {
+        'uid': uid,
+        'isReady': false,
       };
 
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
+
+      await dbs.addEntryToDBWithName(
+          path: 'scholarships', entry: {'uid': uid}, name: uid);
+
+      await dbs.addEntryToDBWithName(
+          path: 'calendars', entry: newCalendar, name: uid);
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -139,47 +185,6 @@ class AuthService {
     return false;
   }
 
-  /// Sign in with Google.
-  ///
-  /// This method initiates the Google sign-in flow and signs in the user into the app using their Google account.
-  /// If the user is not found in the database, it adds them.
-  ///
-  /// @return A Future that completes when the sign-in process is done.
-  Future<void> signInWithGoogle() async {
-    try {
-      // Trigger the Google sign-in flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-
-      // Create a new credential using the auth details
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      // Sign in the user into the app using the credential
-      await FirebaseAuth.instance.signInWithCredential(credential);
-
-      UserService us = UserService();
-
-      bool isUserInDB = await _isUserInDB(uid: us.user?.uid);
-      // If the user is not found in the database, add them
-      if (isUserInDB == false) {
-        await _addNewUserToDB();
-      }
-
-      return;
-    } catch (e) {
-      // If an error occurs, print the error if in debug mode
-      if (kDebugMode) {
-        print(e.toString());
-      }
-    }
-  }
-
   /// Register a new user with email and password.
   ///
   /// This method attempts to register a new user using their email and password.
@@ -191,7 +196,13 @@ class AuthService {
   ///
   /// @return A Future that completes with a String. Returns 'Success' if the user is successfully registered, an error message otherwise.
   Future<String> registerWithEmailAndPass(
-      {required emailAddress, required password, required name}) async {
+      {required emailAddress,
+      required password,
+      required name,
+      required phone,
+      required sport,
+      required gid,
+      required location}) async {
     // Register with email and password
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -199,7 +210,8 @@ class AuthService {
         password: password,
       );
       // Add the new user to the database
-      await _addNewUserToDB(name: name);
+      await _addNewUserToDB(
+          name: name, phone: phone, sport: sport, gid: gid, location: location);
     } on FirebaseAuthException catch (e) {
       // Handle specific FirebaseAuth exceptions
       if (e.code == 'weak-password') {

@@ -17,8 +17,12 @@ class _UserRegisterState extends State<UserRegister> {
   final _passwordController = TextEditingController();
   final _securePasswordController = TextEditingController();
   final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _gidController = TextEditingController();
+  String _selectedLocation = 'Medellin';
+  String _selectedSport = 'tennis';
   late String _errorText = '';
-  bool _isLoading = false; // Add this line
+  bool _isLoading = false;
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate() == true) {
@@ -28,7 +32,11 @@ class _UserRegisterState extends State<UserRegister> {
       String registration = await widget.auth.registerWithEmailAndPass(
           emailAddress: _emailController.text,
           password: _passwordController.text,
-          name: _nameController.text);
+          name: _nameController.text,
+          phone: _phoneController.text,
+          gid: _gidController.text,
+          location: _selectedLocation,
+          sport: _selectedSport);
       if (registration == 'Success') {
         // ignore: use_build_context_synchronously
         Navigator.pop(context);
@@ -89,6 +97,80 @@ class _UserRegisterState extends State<UserRegister> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Text(
+                                  'Phone',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  controller: _phoneController,
+                                  // Rest of your code...
+                                ),
+                                const Text(
+                                  'GID',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  controller: _gidController,
+                                  // Rest of your code...
+                                ),
+                                const Text(
+                                  'Location',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                DropdownButton<String>(
+                                  value: _selectedLocation,
+                                  items: <String>['Medellin', 'Llano Grande']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedLocation = newValue!;
+                                    });
+                                  },
+                                ),
+                                const Text(
+                                  'Sport',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                DropdownButton<String>(
+                                  value: _selectedSport,
+                                  items: <String>['tennis', 'golf']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedSport = newValue!;
+                                    });
+                                  },
+                                ),
                                 const Text(
                                   'Email',
                                   style: TextStyle(
