@@ -82,13 +82,9 @@ class _HomeState extends State<Home> {
             ),
             const SizedBox(height: 20),
             GestureDetector(
-              onTap: () {
-                // Call your sign-out function here
-                Navigator.pushNamed(
-                  context,
-                  '/scholarshipsHome',
-                  arguments: () => setState(() {}),
-                );
+              onTap: () async {
+                await Navigator.pushNamed(context, '/scholarshipsHome');
+                initScholarshipService();
               },
               child: const Text(
                 'becas',

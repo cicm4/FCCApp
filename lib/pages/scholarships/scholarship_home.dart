@@ -5,27 +5,15 @@ import 'package:flutter/material.dart';
 class ScholarshipHome extends StatefulWidget {
   final Future<ScholarshipService> scholarshipService;
   final StorageService st;
-  final VoidCallback onUploadComplete;
 
-  const ScholarshipHome(
-      {Key? key,
-      required this.scholarshipService,
-      required this.st,
-      required this.onUploadComplete})
-      : super(key: key);
+  const ScholarshipHome({
+    Key? key,
+    required this.scholarshipService,
+    required this.st,
+  }) : super(key: key);
 
   @override
   State<ScholarshipHome> createState() => _ScholarshipHomeState();
-
-  static ScholarshipHome fromRouteArguments(
-      BuildContext context, Map<String, dynamic> args) {
-    return ScholarshipHome(
-      scholarshipService: args['scholarshipService'],
-      st: args['st'],
-      onUploadComplete:
-          ModalRoute.of(context)!.settings.arguments as VoidCallback,
-    );
-  }
 }
 
 class _ScholarshipHomeState extends State<ScholarshipHome> {
@@ -35,7 +23,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
 
   @override
   void dispose() {
-    widget.onUploadComplete(); // Call the callback function
+    if (mounted) {}
     super.dispose();
   }
 
@@ -91,7 +79,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
 
       if (uploadResult) {
         await scholarshipService.configureScholarship();
-        widget.onUploadComplete(); // Call the callback function
+        ; // Call the callback function
       }
     } catch (e) {
       // Handle error

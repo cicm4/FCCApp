@@ -79,9 +79,11 @@ class _MyAppState extends State<MyApp> {
       value: us.userStream,
       initialData: us.user,
       child: MaterialApp(
-        routes: getAppRoutes(auth, dbs, st, () {
-          setState(() {});
-        }),
+        routes: getAppRoutes(
+          auth,
+          dbs,
+          st,
+        ),
         theme: generalTheme,
         home: Wrapper(auth: auth, dbs: dbs),
       ),

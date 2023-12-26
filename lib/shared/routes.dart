@@ -10,8 +10,8 @@ import '../pages/home/Home.dart';
 import '../pages/home/login.dart';
 import '../pages/home/register.dart';
 
-Map<String, WidgetBuilder> getAppRoutes(AuthService auth, DBService dbs,
-    StorageService st, VoidCallback onUploadComplete) {
+Map<String, WidgetBuilder> getAppRoutes(
+    AuthService auth, DBService dbs, StorageService st) {
   return {
     '/home': (context) => Home(dbs: dbs),
     '/login': (context) => Login(auth: auth),
@@ -20,7 +20,6 @@ Map<String, WidgetBuilder> getAppRoutes(AuthService auth, DBService dbs,
           scholarshipService:
               ScholarshipService.create(userService: UserService()),
           st: st,
-          onUploadComplete: onUploadComplete,
         )
   };
 }
