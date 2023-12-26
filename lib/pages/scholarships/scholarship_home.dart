@@ -1,15 +1,44 @@
+import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
 import 'package:flutter/material.dart';
 
 class ScholarshipHome extends StatefulWidget {
   final Future<ScholarshipService> scholarshipService;
-  const ScholarshipHome({super.key, required this.scholarshipService});
+  final StorageService st;
+  final VoidCallback onUploadComplete;
+
+  const ScholarshipHome(
+      {Key? key,
+      required this.scholarshipService,
+      required this.st,
+      required this.onUploadComplete})
+      : super(key: key);
 
   @override
   State<ScholarshipHome> createState() => _ScholarshipHomeState();
+
+  static ScholarshipHome fromRouteArguments(
+      BuildContext context, Map<String, dynamic> args) {
+    return ScholarshipHome(
+      scholarshipService: args['scholarshipService'],
+      st: args['st'],
+      onUploadComplete:
+          ModalRoute.of(context)!.settings.arguments as VoidCallback,
+    );
+  }
 }
 
 class _ScholarshipHomeState extends State<ScholarshipHome> {
+  UrlFileType? selectedFileType;
+  var selectedFile;
+  bool isUploading = false;
+
+  @override
+  void dispose() {
+    widget.onUploadComplete(); // Call the callback function
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ScholarshipService>(
@@ -22,7 +51,6 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               'Error'); // Show an error message if something went wrong
         } else {
           ScholarshipService scholarshipService = snapshot.data!;
-          Scholarship? scholarship = scholarshipService.scholarship;
           return Scaffold(
             appBar: AppBar(
               title: Text('Scholarship Home'),
@@ -30,11 +58,15 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
             body: Material(
               child: ListView(
                 children: <Widget>[
-                  _buildListItem(
-                      'Liquidacion de Matricula', scholarship?.matriculaURL),
-                  _buildListItem('Horario', scholarship?.horarioURL),
-                  _buildListItem('Soporte de Pago', scholarship?.soporteURL),
-                  _buildListItem('Numero de Banco', scholarship?.bankaccount),
+                  _buildListItem('Liquidacion de Matricula', 'matriculaURL',
+                      scholarshipService, UrlFileType.matriculaURL),
+                  _buildListItem('Horario', 'horarioURL', scholarshipService,
+                      UrlFileType.horarioURL),
+                  _buildListItem('Soporte de Pago', 'soporteURL',
+                      scholarshipService, UrlFileType.soporteURL),
+                  _buildListItem('Numero de Banco', 'bankAccount',
+                      scholarshipService, UrlFileType.bankAccount),
+                  _buildButtons(scholarshipService),
                 ],
               ),
             ),
@@ -44,12 +76,73 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     );
   }
 
-  Widget _buildListItem(String title, String? value) {
+  Future<void> uploadFile(ScholarshipService scholarshipService) async {
+    setState(() {
+      isUploading = true;
+    });
+
+    try {
+      bool uploadResult = await scholarshipService.addFiledReqierment(
+        st: widget.st,
+        type: selectedFileType!,
+        file: selectedFile![0],
+        fileName: selectedFile![1],
+      );
+
+      if (uploadResult) {
+        await scholarshipService.configureScholarship();
+        widget.onUploadComplete(); // Call the callback function
+      }
+    } catch (e) {
+      // Handle error
+    } finally {
+      setState(() {
+        isUploading = false;
+        selectedFile = null;
+        selectedFileType = null;
+      });
+    }
+  }
+
+  Widget _buildListItem(String title, String type,
+      ScholarshipService scholarshipService, UrlFileType urlFileType) {
+    var dataFromDatabase = scholarshipService.getScholarshipData();
     return ListTile(
       title: Text(title),
       trailing: Icon(
-        value != null ? Icons.check : Icons.close,
-        color: value != null ? Colors.green : Colors.red,
+        dataFromDatabase[type] != null ? Icons.check : Icons.close,
+        color: dataFromDatabase[type] != null ? Colors.green : Colors.red,
+      ),
+      onTap: () {
+        setState(() {
+          selectedFileType = urlFileType;
+          selectedFile = null;
+        });
+      },
+    );
+  }
+
+  Widget _buildButtons(ScholarshipService scholarshipService) {
+    return Visibility(
+      visible: selectedFileType != null,
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              selectedFile = await scholarshipService.getURLFileType();
+              setState(() {});
+            },
+            child: const Text('Select File'),
+          ),
+          ElevatedButton(
+            onPressed: selectedFile != null
+                ? () => uploadFile(scholarshipService)
+                : null,
+            child: isUploading
+                ? CircularProgressIndicator()
+                : const Text('Upload File'),
+          ),
+        ],
       ),
     );
   }

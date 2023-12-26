@@ -84,7 +84,11 @@ class _HomeState extends State<Home> {
             GestureDetector(
               onTap: () {
                 // Call your sign-out function here
-                Navigator.pushNamed(context, '/scholarshipsHome');
+                Navigator.pushNamed(
+                  context,
+                  '/scholarshipsHome',
+                  arguments: () => setState(() {}),
+                );
               },
               child: const Text(
                 'becas',

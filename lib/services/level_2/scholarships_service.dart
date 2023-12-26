@@ -9,9 +9,9 @@ import 'package:flutter/foundation.dart';
 
 /// The `ScholarshipService` class is responsible for managing the scholarship data.
 enum UrlFileType {
-  matricula,
-  horario,
-  soporte,
+  matriculaURL,
+  horarioURL,
+  soporteURL,
   bankAccount,
 }
 
@@ -34,72 +34,55 @@ class ScholarshipService {
         path: 'scholarships', data: '${userService.user?.uid}');
   }
 
-  //such as matricula and horario URLS, essensialy any URL file that will be saved on the storage and URL on the database
-  /// Method to add a file requirement such as matricula and horario URLs.
-  /// These are essential URL files that will be saved on the storage and URL on the database.
-  ///
-  /// The [st] parameter is the storage service used to store the file.
-  /// The [type] parameter is the type of the file, represented by the [UrlFileType] enum.
-  ///
-  /// This method returns a [Future] that completes with a boolean value.
-  /// The boolean value is true if the file was successfully added, and false otherwise.
-  ///
-  /// This method uses the [FilePicker] package to pick the file from the device file system.
-  /// It only allows files with the extensions 'jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'txt'.
-  ///
-  /// If the file is successfully picked, it is added to the storage with the [StorageService.addFile] method.
-  /// The path of the file in the storage is 'scholarships/${userService.user?.uid}/$fileType/$fileName'.
-  ///
-  /// After the file is added to the storage, the scholarship data in the database is updated with the new file path.
-  /// The data is updated with the [DBService.addEntryToDBWithName] method.
-  /// The path of the data in the database is 'scholarships'.
-  ///
-  /// If an error occurs while picking the file, adding it to the storage, or updating the data in the database,
-  /// the method catches the error and returns false.
-  Future<bool> addFiledReqierment(
-      {required StorageService st, required UrlFileType type}) async {
+  Future getURLFileType() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'txt'],
     );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      String fileName = result.files.first.name;
+      return [file, fileName];
+    }
+  }
+
+  Future addFiledReqierment(
+      {required StorageService st,
+      required UrlFileType type,
+      required file,
+      required fileName}) async {
     try {
-      if (result != null) {
-        File file = File(result.files.single.path!);
-        String fileName = result.files.first.name;
+      String fileType;
 
-        String fileType;
+      var data = await getScholarshipData();
 
-        var data = await getScholarshipData();
-
-        switch (type) {
-          case UrlFileType.matricula:
-            fileType = 'matriculaURL';
-            break;
-          case UrlFileType.horario:
-            fileType = 'horarioURL';
-            break;
-          case UrlFileType.soporte:
-            fileType = 'soporteURL';
-            break;
-          case UrlFileType.bankAccount:
-            fileType = 'bankaccount';
-            break;
-        }
-
-        data[fileType] =
-            'scholarships/${userService.user?.uid}/$fileType/$fileName';
-
-        await st.addFile(
-            path: 'scholarships/${userService.user?.uid}/$fileType/$fileName',
-            file: file,
-            data: fileName);
-
-        await dbService.addEntryToDBWithName(
-            path: 'scholarships', entry: data, name: UserService().user!.uid);
-
-        return true;
+      switch (type) {
+        case UrlFileType.matriculaURL:
+          fileType = 'matriculaURL';
+          break;
+        case UrlFileType.horarioURL:
+          fileType = 'horarioURL';
+          break;
+        case UrlFileType.soporteURL:
+          fileType = 'soporteURL';
+          break;
+        case UrlFileType.bankAccount:
+          // TODO: Handle this case.
+          fileType = 'bankAccount';
       }
-      return false;
+
+      data[fileType] = 'scholarships/${userService.user?.uid}/$fileType';
+
+      await st.addFile(
+          path: 'scholarships/${userService.user?.uid}/$fileType',
+          file: file,
+          data: fileName);
+
+      await dbService.addEntryToDBWithName(
+          path: 'scholarships', entry: data, name: UserService().user!.uid);
+
+      return true;
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -115,7 +98,7 @@ class ScholarshipService {
   }
 
   /// Configures the scholarship by fetching the scholarship data and creating a `Scholarship` object from it.
-  Future<void> _configureScholarship() async {
+  Future<void> configureScholarship() async {
     scholarship = Scholarship.fromMap(await _getScholarshipDataFromDB());
   }
 
@@ -124,7 +107,7 @@ class ScholarshipService {
       {required UserService userService}) async {
     var scholarshipService =
         ScholarshipService._(scholarship: null, userService: userService);
-    await scholarshipService._configureScholarship();
+    await scholarshipService.configureScholarship();
     return scholarshipService;
   }
 
@@ -201,6 +184,8 @@ class Scholarship {
 
   getScholarshipData() {
     return {
+      'uid': uid,
+      'gid': gid,
       'matriculaURL': matriculaURL,
       'horarioURL': horarioURL,
       'soporteURL': soporteURL,
