@@ -20,13 +20,14 @@ class ScholarshipService {
   Scholarship? scholarship;
 
   /// The database service used to fetch and store scholarship data.
-  DBService dbService = DBService();
+  DBService dbService;
 
   /// The user service used to get the current user's data.
   UserService userService;
 
   /// Private constructor used by the `create` method to create a new `ScholarshipService`.
-  ScholarshipService._({this.scholarship, required this.userService});
+  ScholarshipService._(
+      {this.scholarship, required this.userService, required this.dbService});
 
   /// Fetches the scholarship data for the current user from the database.
   _getScholarshipDataFromDB() async {
@@ -68,8 +69,8 @@ class ScholarshipService {
           fileType = 'soporteURL';
           break;
         case UrlFileType.bankAccount:
-          // TODO: Handle this case.
           fileType = 'bankAccount';
+          break;
       }
 
       data[fileType] = 'scholarships/${userService.user?.uid}/$fileType';
@@ -104,9 +105,9 @@ class ScholarshipService {
 
   /// Creates a new `ScholarshipService`, configures the scholarship, and returns the `ScholarshipService`.
   static Future<ScholarshipService> create(
-      {required UserService userService}) async {
-    var scholarshipService =
-        ScholarshipService._(scholarship: null, userService: userService);
+      {required UserService userService, required DBService dbService}) async {
+    var scholarshipService = ScholarshipService._(
+        scholarship: null, userService: userService, dbService: dbService);
     await scholarshipService.configureScholarship();
     return scholarshipService;
   }

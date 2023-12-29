@@ -17,8 +17,8 @@ Map<String, WidgetBuilder> getAppRoutes(
     '/login': (context) => Login(auth: auth),
     '/register': (context) => UserRegister(auth: auth),
     '/scholarshipsHome': (context) => ScholarshipHome(
-          scholarshipService:
-              ScholarshipService.create(userService: UserService()),
+          scholarshipService: ScholarshipService.create(
+              userService: UserService(), dbService: dbs),
           st: st,
         )
   };

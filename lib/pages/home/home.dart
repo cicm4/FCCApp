@@ -28,8 +28,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> initScholarshipService() async {
-    scholarshipService =
-        await ScholarshipService.create(userService: UserService());
+    scholarshipService = await ScholarshipService.create(
+        userService: UserService(), dbService: widget.dbs);
     scholarshipStatus = scholarshipService.getStatusNum();
     if (mounted) {
       setState(() {});
