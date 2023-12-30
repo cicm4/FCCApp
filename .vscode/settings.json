@@ -3,5 +3,6 @@
     "cSpell.words": [
         "fccapp",
         "firestore"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
