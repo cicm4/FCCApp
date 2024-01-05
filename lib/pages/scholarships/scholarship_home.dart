@@ -1,3 +1,4 @@
+import 'package:fccapp/pages/scholarships/file_preview_home.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
   UrlFileType? selectedFileType;
   var selectedFile;
   bool isUploading = false;
+  var dataFromDatabase;
 
   @override
   void dispose() {
@@ -39,22 +41,63 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               'Error'); // Show an error message if something went wrong
         } else {
           ScholarshipService scholarshipService = snapshot.data!;
+          dataFromDatabase = scholarshipService.getScholarshipData();
           return Scaffold(
             appBar: AppBar(
-              title: Text('Scholarship Home'),
+              title: const Text('Scholarship Home'),
+              backgroundColor: Colors.black,
             ),
             body: Material(
+              color: Colors.black,
               child: ListView(
                 children: <Widget>[
-                  _buildListItem('Liquidacion de Matricula', 'matriculaURL',
-                      scholarshipService, UrlFileType.matriculaURL),
+                  _buildListItem(
+                      'Liquidacion de Matricula',
+                      'matriculaURL',
+                      scholarshipService,
+                      UrlFileType.matriculaURL,
+                      dataFromDatabase),
                   _buildListItem('Horario', 'horarioURL', scholarshipService,
-                      UrlFileType.horarioURL),
-                  _buildListItem('Soporte de Pago', 'soporteURL',
-                      scholarshipService, UrlFileType.soporteURL),
-                  _buildListItem('Numero de Banco', 'bankAccount',
-                      scholarshipService, UrlFileType.bankAccount),
+                      UrlFileType.horarioURL, dataFromDatabase),
+                  _buildListItem(
+                      'Soporte de Pago',
+                      'soporteURL',
+                      scholarshipService,
+                      UrlFileType.soporteURL,
+                      dataFromDatabase),
+                  _buildListItem(
+                      'Numero de Banco',
+                      'bankAccount',
+                      scholarshipService,
+                      UrlFileType.bankAccount,
+                      dataFromDatabase),
                   _buildButtons(scholarshipService),
+                  selectedFileType != null &&
+                          dataFromDatabase[
+                                  selectedFileType.toString().split('.')[1]] !=
+                              null
+                      ? LayoutBuilder(
+                          builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                height: constraints.maxHeight == double.infinity
+                                    ? MediaQuery.of(context)
+                                            .size
+                                            .height - //here goes the height of everything else
+                                        400
+                                    : constraints.maxHeight,
+                                child: FilePreview(
+                                  fileType: selectedFileType!,
+                                  scholarshipService: scholarshipService,
+                                  storageService: widget.st,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -73,13 +116,13 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
       bool uploadResult = await scholarshipService.addFiledReqierment(
         st: widget.st,
         type: selectedFileType!,
-        file: selectedFile![0],
+        fileURL: selectedFile![0],
         fileName: selectedFile![1],
       );
 
       if (uploadResult) {
-        await scholarshipService.configureScholarship();
-        ; // Call the callback function
+        await scholarshipService
+            .configureScholarship(); // Call the callback function
       }
     } catch (e) {
       // Handle error
@@ -92,11 +135,15 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     }
   }
 
-  Widget _buildListItem(String title, String type,
-      ScholarshipService scholarshipService, UrlFileType urlFileType) {
-    var dataFromDatabase = scholarshipService.getScholarshipData();
+  Widget _buildListItem(
+      String title,
+      String type,
+      ScholarshipService scholarshipService,
+      UrlFileType urlFileType,
+      var dataFromDatabase) {
     return ListTile(
-      title: Text(title),
+      tileColor: selectedFileType == urlFileType ? Colors.green[800] : null,
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       trailing: Icon(
         dataFromDatabase[type] != null ? Icons.check : Icons.close,
         color: dataFromDatabase[type] != null ? Colors.green : Colors.red,
@@ -116,19 +163,23 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
       child: Column(
         children: [
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
             onPressed: () async {
               selectedFile = await scholarshipService.getURLFileType();
               setState(() {});
             },
-            child: const Text('Select File'),
+            child: const Text('Select File',
+                style: TextStyle(color: Colors.white)),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
             onPressed: selectedFile != null
                 ? () => uploadFile(scholarshipService)
                 : null,
             child: isUploading
-                ? CircularProgressIndicator()
-                : const Text('Upload File'),
+                ? const CircularProgressIndicator()
+                : const Text('Upload File',
+                    style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

@@ -35,6 +35,64 @@ class ScholarshipService {
         path: 'scholarships', data: '${userService.user?.uid}');
   }
 
+  /// Fetches a file from Firebase Storage based on the specified [fileType].
+  ///
+  /// The [fileType] parameter is an enum of type `UrlFileType` that specifies the type of the file to retrieve.
+  /// The [storageService] parameter is an instance of `StorageService` that is used to interact with Firebase Storage.
+  ///
+  /// This method uses a switch statement to determine the path and data for the file based on the [fileType].
+  /// It then calls the `getFileFromST` method of the `StorageService` class to retrieve the file.
+  ///
+  /// If the file is successfully retrieved, this method returns the file as a `Uint8List`.
+  /// If an error occurs during retrieval, this method throws an exception with a message that includes the error.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// final Uint8List fileData = await scholarshipService.getURLFile(
+  ///   fileType: UrlFileType.matriculaURL,
+  ///   storageService: storageService,
+  /// );
+  /// ```
+  ///
+  /// Throws:
+  ///   - `Exception` if an invalid `UrlFileType` is provided.
+  ///   - `Exception` if there is an error fetching the file.
+  Future<Uint8List> getURLFile(
+      {required UrlFileType fileType,
+      required StorageService storageService}) async {
+    try {
+      String path;
+      String data;
+      switch (fileType) {
+        case UrlFileType.matriculaURL:
+          path = scholarship!.matriculaURL!;
+          data = scholarship!.matriculaURLName!;
+        case UrlFileType.horarioURL:
+          path = scholarship!.horarioURL!;
+          data = scholarship!.horarioURLName!;
+        case UrlFileType.soporteURL:
+          path = scholarship!.soporteURL!;
+          data = scholarship!.soporteURLName!;
+        case UrlFileType.bankAccount:
+          path = scholarship!.bankaccount!;
+          data = scholarship!.bankaccountName!;
+        default: // Should never happen
+          throw Exception('Invalid UrlFileType');
+      }
+      print(
+          'calling getFileFromST from storageService with path: $path and data: $data');
+      final Uint8List fileData =
+          await storageService.getFileFromST(path: path, data: data);
+      return fileData;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      throw Exception('Error fetching file: $e');
+    }
+  }
+
   Future getURLFileType() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -48,36 +106,57 @@ class ScholarshipService {
     }
   }
 
+  Future showURLFileTypeFile(
+      {required UrlFileType type,
+      required StorageService storageService}) async {}
+
   Future addFiledReqierment(
       {required StorageService st,
       required UrlFileType type,
-      required file,
+      required fileURL,
       required fileName}) async {
     try {
       String fileType;
+      String fileTypeName;
 
       var data = await getScholarshipData();
 
       switch (type) {
         case UrlFileType.matriculaURL:
           fileType = 'matriculaURL';
+          fileTypeName = 'matriculaURLName';
           break;
         case UrlFileType.horarioURL:
           fileType = 'horarioURL';
+          fileTypeName = 'horarioURLName';
           break;
         case UrlFileType.soporteURL:
           fileType = 'soporteURL';
+          fileTypeName = 'soporteURLName';
           break;
         case UrlFileType.bankAccount:
           fileType = 'bankAccount';
+          fileTypeName = 'bankAccountName';
           break;
       }
-
-      data[fileType] = 'scholarships/${userService.user?.uid}/$fileType';
+      try {
+        data[fileType] = 'scholarships/${userService.user?.uid}/$fileType';
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+      try {
+        data[fileTypeName] = fileName;
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
 
       await st.addFile(
           path: 'scholarships/${userService.user?.uid}/$fileType',
-          file: file,
+          file: fileURL,
           data: fileName);
 
       await dbService.addEntryToDBWithName(
@@ -134,14 +213,25 @@ class Scholarship {
   /// The URL of the matricula.
   final String? matriculaURL;
 
+  /// The Name of the matricula.
+  final String? matriculaURLName;
+
   /// The URL of the horario.
   final String? horarioURL;
+
+  /// The Name of the horario.
+  final String? horarioURLName;
 
   /// The URL of the soporte.
   final String? soporteURL;
 
+  /// The Name of the soporte.
+  final String? soporteURLName;
+
   /// The bank account associated with the scholarship.
   final String? bankaccount;
+
+  final String? bankaccountName;
 
   /// Creates a new `Scholarship` with the given data.
   Scholarship({
@@ -151,6 +241,10 @@ class Scholarship {
     required this.horarioURL,
     required this.soporteURL,
     required this.bankaccount,
+    required this.matriculaURLName,
+    required this.horarioURLName,
+    required this.soporteURLName,
+    required this.bankaccountName,
   });
 
   /// Creates a new `Scholarship` from a map of data.
@@ -162,6 +256,10 @@ class Scholarship {
       horarioURL: data['horarioURL'],
       soporteURL: data['soporteURL'],
       bankaccount: data['bankaccount'],
+      matriculaURLName: data['matriculaURLName'],
+      horarioURLName: data['horarioURLName'],
+      soporteURLName: data['soporteURLName'],
+      bankaccountName: data['bankAccountName'],
     );
   }
 
@@ -183,6 +281,7 @@ class Scholarship {
     return status;
   }
 
+  /// Returns a map of the scholarship data.
   getScholarshipData() {
     return {
       'uid': uid,
@@ -191,6 +290,10 @@ class Scholarship {
       'horarioURL': horarioURL,
       'soporteURL': soporteURL,
       'bankaccount': bankaccount,
+      'matriculaURLName': matriculaURLName,
+      'horarioURLName': horarioURLName,
+      'soporteURLName': soporteURLName,
+      'bankAccountName': bankaccountName,
     };
   }
 }

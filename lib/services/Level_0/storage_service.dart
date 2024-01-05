@@ -80,24 +80,46 @@ class StorageService {
     return false;
   }
 
-  /// Retrieves a file from Firebase Storage.
+  /// Fetches a file from Firebase Storage.
   ///
-  /// This function retrieves a file from a specified path in Firebase Storage.
-  /// It requires a data and a path as parameters. The data parameter is expected to be the name of the file.
+  /// This method retrieves a file from Firebase Storage at the specified [path] and [data].
+  /// It returns the file as a `Uint8List`.
   ///
-  /// @param data The name of the file.
-  /// @param path The path in Firebase Storage where the file is located.
+  /// The [path] parameter is the path to the file in Firebase Storage.
+  /// The [data] parameter is the name of the file.
   ///
-  /// @return The reference to the file in Firebase Storage.
-  getFileFromST({required String data, required String path}) {
+  /// If the file is successfully retrieved, this method returns the file as a `Uint8List`.
+  /// If the file is not found or an error occurs during retrieval, this method returns an empty `Uint8List`.
+  ///
+  /// This method uses the `getData` method of the `Reference` class to retrieve the file.
+  /// The `getData` method retrieves up to a specified maximum size (in this case, 3 megabytes).
+  /// If the file is larger than this size, the `getData` method throws an exception.
+  /// This method catches this exception and prints it to the console in debug mode.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// final Uint8List fileData = await storageService.getFileFromST(
+  ///   path: 'path/to/file',
+  ///   data: 'filename',
+  /// );
+  /// ```
+  Future<Uint8List> getFileFromST(
+      {required String path, required String data}) async {
     try {
-      final ref = st.ref().child('$path/$data');
-      return ref;
+      final storageRef = FirebaseStorage.instance.ref();
+      const oneMegabyte = 1024 * 1024;
+      final pathRef = storageRef.child('$path/$data');
+      print('retriving with final file path: $path/$data');
+      final Uint8List? dataList = await pathRef.getData(3 * oneMegabyte);
+      return dataList ??
+          Uint8List(
+              0); //returns dataList if there is data in datalist, else returns empty Uint8List
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
     }
-    return null;
+    return Uint8List(0);
   }
 }
