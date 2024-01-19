@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:fccapp/services/level_2/scholarship.dart';
 import 'package:file_picker/file_picker.dart';
-
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
@@ -14,7 +12,7 @@ import 'package:flutter/foundation.dart';
 /// - `matriculaURL`: Represents a URL for a matricula (enrollment) document or page.
 /// - `horarioURL`: Represents a URL for a horario (schedule) document or page.
 /// - `soporteURL`: Represents a URL for a soporte (support) document or page.
-/// - `bankAccount`: Represents a URL for a bank account page or a bank account number.
+/// - `bankaccount`: Represents a URL for a bank account page or a bank account number.
 ///
 /// This enum is used in the `getURLFile` and `addFiledReqierment` methods of the `ScholarshipService` class
 /// to determine the type of the file to retrieve or add. The methods use a switch statement to handle each
@@ -23,7 +21,7 @@ enum UrlFileType {
   matriculaURL,
   horarioURL,
   soporteURL,
-  bankAccount,
+  bankaccount,
 }
 
 /// The `ScholarshipService` class is responsible for managing the scholarship data.
@@ -62,7 +60,7 @@ class ScholarshipService {
   /// The scholarship.
   Scholarship? scholarship;
 
-  /// The database service used to fetch and store scholarship data.
+  /// The `database service used to fetch and store scholarship data.
   DBService dbService;
 
   /// The user service used to get the current user's data.
@@ -131,7 +129,7 @@ class ScholarshipService {
         case UrlFileType.soporteURL:
           path = scholarship!.soporteURL!;
           data = scholarship!.soporteURLName!;
-        case UrlFileType.bankAccount:
+        case UrlFileType.bankaccount:
           path = scholarship!.bankaccount!;
           data = scholarship!.bankaccountName!;
         default: // Should never happen
@@ -166,14 +164,14 @@ class ScholarshipService {
   /// Example usage:
   ///
   /// ```dart
-  /// final List<dynamic>? selectedFileData = await scholarshipService.getURLFileType();
+  /// final List<dynamic>? selectedFileData = await scholarshipService.pickURLFileType();
   /// if (selectedFileData != null) {
   ///   final File file = selectedFileData[0];
   ///   final String fileName = selectedFileData[1];
   ///   // Use the file and file name...
   /// }
   /// ```
-  Future getURLFileType() async {
+  Future pickURLFileType() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -245,8 +243,8 @@ class ScholarshipService {
           fileType = 'soporteURL';
           fileTypeName = 'soporteURLName';
           break;
-        case UrlFileType.bankAccount:
-          fileType = 'bankAccount';
+        case UrlFileType.bankaccount:
+          fileType = 'bankaccount';
           fileTypeName = 'bankAccountName';
           break;
       }
@@ -301,6 +299,45 @@ class ScholarshipService {
   /// ```
   getScholarshipData() {
     return scholarship?.getScholarshipData();
+  }
+
+  /// Checks if the bank detail is a URL file.
+  ///
+  /// This method calls the `isBankDetailAURLFile` method of the `scholarship` object.
+  /// The `scholarship` object is expected to have a `isBankDetailAURLFile` method which determines if the bank detail is a URL file.
+  ///
+  /// Returns:
+  /// `true` if the bank detail is a URL file, `false` otherwise and `false` if an error is thrown.
+  bool getBankDetailAURLFile() {
+    try {
+      return scholarship?.getBankDetailAURLFile();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void setBankDetailAURLFile(bool isFile) {
+    scholarship?.setBankDetailAURLFile(isFile);
+  }
+
+  String getBankAccount() {
+    return scholarship!.bankaccount!;
+  }
+
+  Future<bool> setBankAccount(dynamic bankAccount) async {
+    if (!getBankDetailAURLFile()) {
+      var data = await getScholarshipData();
+      data['bankaccount'] = bankAccount;
+      return true;
+    } else {
+      await addFiledReqierment(
+        st: StorageService(),
+        type: UrlFileType.bankaccount,
+        fileURL: bankAccount,
+        fileName: 'bankaccount',
+      );
+      return true;
+    }
   }
 
   /// Configures the scholarship by fetching the scholarship data and creating a `Scholarship` object from it.

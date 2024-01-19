@@ -20,14 +20,10 @@ class ScholarshipHome extends StatefulWidget {
 class _ScholarshipHomeState extends State<ScholarshipHome> {
   UrlFileType? selectedFileType;
   var selectedFile;
+  String bankAccountText = '';
   bool isUploading = false;
   var dataFromDatabase;
-
-  @override
-  void dispose() {
-    if (mounted) {}
-    super.dispose();
-  }
+  bool isBankAccountFile = true;
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +31,14 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
       future: widget.scholarshipService,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Show a loading spinner while waiting
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return const Text(
-              'Error'); // Show an error message if something went wrong
+          return const Text('Error');
         } else {
           ScholarshipService scholarshipService = snapshot.data!;
           dataFromDatabase = scholarshipService.getScholarshipData();
+          bankAccountText = scholarshipService.getBankAccount();
+
           return Scaffold(
             appBar: AppBar(
               title: const Text('Scholarship Home'),
@@ -65,39 +62,10 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                       scholarshipService,
                       UrlFileType.soporteURL,
                       dataFromDatabase),
-                  _buildListItem(
-                      'Numero de Banco',
-                      'bankAccount',
-                      scholarshipService,
-                      UrlFileType.bankAccount,
-                      dataFromDatabase),
-                  _buildButtons(scholarshipService),
-                  selectedFileType != null &&
-                          dataFromDatabase[
-                                  selectedFileType.toString().split('.')[1]] !=
-                              null
-                      ? LayoutBuilder(
-                          builder: (BuildContext context,
-                              BoxConstraints constraints) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                height: constraints.maxHeight == double.infinity
-                                    ? MediaQuery.of(context)
-                                            .size
-                                            .height - //here goes the height of everything else
-                                        400
-                                    : constraints.maxHeight,
-                                child: FilePreview(
-                                  fileType: selectedFileType!,
-                                  scholarshipService: scholarshipService,
-                                  storageService: widget.st,
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : Container(),
+                  _buildBankAccountItem(scholarshipService),
+                  _buildSelectFileButton(scholarshipService),
+                  _buildUploadButton(scholarshipService),
+                  _buildFilePreview(scholarshipService),
                 ],
               ),
             ),
@@ -107,22 +75,101 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     );
   }
 
-  Future<void> uploadFile(ScholarshipService scholarshipService) async {
+  Widget _buildSelectFileButton(ScholarshipService scholarshipService) {
+    return Visibility(
+      visible: selectedFileType != null &&
+          (isBankAccountFile || selectedFileType != UrlFileType.bankaccount),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
+        onPressed: () async {
+          selectedFile = await scholarshipService.pickURLFileType();
+          setState(() {});
+        },
+        child: const Text('Select File', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  Widget _buildUploadButton(ScholarshipService scholarshipService) {
+    return Visibility(
+      visible: selectedFileType != null &&
+          (selectedFile != null ||
+              (selectedFileType == UrlFileType.bankaccount &&
+                  !isBankAccountFile)),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
+        onPressed: () => uploadFile(
+            scholarshipService, selectedFileType.toString().split('.')[1]),
+        child: isUploading
+            ? const CircularProgressIndicator()
+            : const Text('Upload File', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  String? getFileTypeData() {
+    var splitList = selectedFileType.toString().split('.');
+    if (splitList.length > 1) {
+      return dataFromDatabase[splitList[1]];
+    }
+    return null;
+  }
+
+  Widget _buildFilePreview(ScholarshipService scholarshipService) {
+    return Visibility(
+      visible: selectedFileType != null &&
+          dataFromDatabase[selectedFileType.toString().split('.')[1]] != null,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: constraints.maxHeight == double.infinity
+                  ? MediaQuery.of(context).size.height - 400
+                  : constraints.maxHeight,
+              child: FilePreview(
+                fileType: selectedFileType!,
+                scholarshipService: scholarshipService,
+                storageService: widget.st,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> uploadFile(
+      ScholarshipService scholarshipService, String? urlFileType) async {
     setState(() {
       isUploading = true;
     });
 
+    bool uploadResult;
     try {
-      bool uploadResult = await scholarshipService.addFiledReqierment(
-        st: widget.st,
-        type: selectedFileType!,
-        fileURL: selectedFile![0],
-        fileName: selectedFile![1],
-      );
+      if (urlFileType != 'bankaccount' || urlFileType == null) {
+        uploadResult = await scholarshipService.addFiledReqierment(
+          st: widget.st,
+          type: selectedFileType!,
+          fileURL: selectedFile![0],
+          fileName: selectedFile![1],
+        );
+      } else {
+        if (isBankAccountFile) {
+          uploadResult = await scholarshipService.addFiledReqierment(
+            st: widget.st,
+            type: selectedFileType!,
+            fileURL: selectedFile![0],
+            fileName: selectedFile![1],
+          );
+        } else {
+          uploadResult =
+              await scholarshipService.setBankAccount(bankAccountText);
+        }
+      }
 
       if (uploadResult) {
-        await scholarshipService
-            .configureScholarship(); // Call the callback function
+        await scholarshipService.configureScholarship();
       }
     } catch (e) {
       // Handle error
@@ -157,32 +204,58 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     );
   }
 
-  Widget _buildButtons(ScholarshipService scholarshipService) {
-    return Visibility(
-      visible: selectedFileType != null,
-      child: Column(
-        children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
-            onPressed: () async {
-              selectedFile = await scholarshipService.getURLFileType();
-              setState(() {});
+  Widget _buildBankAccountItem(ScholarshipService scholarshipService) {
+    return Column(
+      children: [
+        ListTile(
+          tileColor: selectedFileType == UrlFileType.bankaccount
+              ? Colors.green[800]
+              : null,
+          title: const Text('Numero de Banco',
+              style: TextStyle(color: Colors.white)),
+          trailing: Icon(
+            dataFromDatabase['bankaccount'] != null ? Icons.check : Icons.close,
+            color: dataFromDatabase['bankaccount'] != null
+                ? Colors.green
+                : Colors.red,
+          ),
+          onTap: () {
+            setState(() {
+              selectedFileType = UrlFileType.bankaccount;
+              selectedFile = null;
+            });
+          },
+        ),
+        Visibility(
+          visible: selectedFileType == UrlFileType.bankaccount,
+          child: SwitchListTile(
+            title: const Text('Switch to URL file type'),
+            value: isBankAccountFile,
+            onChanged: (bool value) {
+              setState(() {
+                isBankAccountFile = value;
+              });
             },
-            child: const Text('Select File',
-                style: TextStyle(color: Colors.white)),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
-            onPressed: selectedFile != null
-                ? () => uploadFile(scholarshipService)
-                : null,
-            child: isUploading
-                ? const CircularProgressIndicator()
-                : const Text('Upload File',
-                    style: TextStyle(color: Colors.white)),
+        ),
+        Visibility(
+          visible:
+              selectedFileType == UrlFileType.bankaccount && !isBankAccountFile,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                bankAccountText = value;
+              },
+              controller: TextEditingController(text: bankAccountText),
+              decoration: const InputDecoration(
+                labelText: 'Bank Account Number',
+                border: OutlineInputBorder(),
+              ),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

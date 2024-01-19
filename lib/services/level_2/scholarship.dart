@@ -67,6 +67,11 @@ class Scholarship {
   /// This is the name associated with the bank account. It is used for display purposes.
   final String? bankaccountName;
 
+  /// Is the bank data a file such as a PDF/PNG/JPG..?
+  ///
+  /// This is a boolean that represents that
+  bool? isBankDataFile;
+
   /// Creates a new `Scholarship` with the given data.
   ///
   /// This constructor takes several arguments, each representing a different piece of scholarship data.
@@ -104,6 +109,7 @@ class Scholarship {
     required this.horarioURLName,
     required this.soporteURLName,
     required this.bankaccountName,
+    required this.isBankDataFile,
   });
 
   /// Creates a new `Scholarship` from a map of data.
@@ -136,6 +142,7 @@ class Scholarship {
       horarioURLName: data['horarioURLName'],
       soporteURLName: data['soporteURLName'],
       bankaccountName: data['bankAccountName'],
+      isBankDataFile: data['isBankDataFile'],
     );
   }
 
@@ -220,6 +227,15 @@ class Scholarship {
       'horarioURLName': horarioURLName,
       'soporteURLName': soporteURLName,
       'bankAccountName': bankaccountName,
+      'isBankDataFile': isBankDataFile,
     };
+  }
+
+  getBankDetailAURLFile() {
+    return isBankDataFile;
+  }
+
+  setBankDetailAURLFile(bool isFile) {
+    isBankDataFile = isFile;
   }
 }

@@ -110,7 +110,9 @@ class StorageService {
       final storageRef = FirebaseStorage.instance.ref();
       const oneMegabyte = 1024 * 1024;
       final pathRef = storageRef.child('$path/$data');
-      print('retriving with final file path: $path/$data');
+      if (kDebugMode) {
+        print('retriving with final file path: $path/$data');
+      }
       final Uint8List? dataList = await pathRef.getData(3 * oneMegabyte);
       return dataList ??
           Uint8List(
