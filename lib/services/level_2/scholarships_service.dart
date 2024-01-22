@@ -320,24 +320,24 @@ class ScholarshipService {
     scholarship?.setBankDetailAURLFile(isFile);
   }
 
-  String getBankAccount() {
-    return scholarship!.bankaccount!;
+  String? getBankAccount() {
+    return scholarship?.bankaccount;
   }
 
-  Future<bool> setBankAccount(dynamic bankAccount) async {
-    if (!getBankDetailAURLFile()) {
+  //sets the text for the bank account asuming that the bank account is not a file
+  Future<bool> setBankAccount(String? bankAccount) async {
+    try {
       var data = await getScholarshipData();
       data['bankaccount'] = bankAccount;
+      await dbService.addEntryToDBWithName(
+          path: 'scholarships', entry: data, name: UserService().user!.uid);
       return true;
-    } else {
-      await addFiledReqierment(
-        st: StorageService(),
-        type: UrlFileType.bankaccount,
-        fileURL: bankAccount,
-        fileName: 'bankaccount',
-      );
-      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
     }
+    return false;
   }
 
   /// Configures the scholarship by fetching the scholarship data and creating a `Scholarship` object from it.

@@ -20,7 +20,7 @@ class ScholarshipHome extends StatefulWidget {
 class _ScholarshipHomeState extends State<ScholarshipHome> {
   UrlFileType? selectedFileType;
   var selectedFile;
-  String bankAccountText = '';
+  String? bankAccountText = '';
   bool isUploading = false;
   var dataFromDatabase;
   bool isBankAccountFile = true;
@@ -118,7 +118,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
   Widget _buildFilePreview(ScholarshipService scholarshipService) {
     return Visibility(
       visible: selectedFileType != null &&
-          dataFromDatabase[selectedFileType.toString().split('.')[1]] != null,
+              dataFromDatabase[selectedFileType.toString().split('.')[1]] !=
+                  null ||
+          (selectedFileType == UrlFileType.bankaccount && !isBankAccountFile),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Padding(
