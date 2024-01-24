@@ -19,10 +19,10 @@ class ScholarshipHome extends StatefulWidget {
 
 class _ScholarshipHomeState extends State<ScholarshipHome> {
   UrlFileType? selectedFileType;
-  var selectedFile;
+  dynamic selectedFile;
   String? bankAccountText = '';
   bool isUploading = false;
-  var dataFromDatabase;
+  dynamic dataFromDatabase;
   bool isBankAccountFile = true;
 
   @override

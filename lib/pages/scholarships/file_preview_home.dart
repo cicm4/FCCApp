@@ -50,7 +50,7 @@ class _FilePreviewState extends State<FilePreview> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return const Text('Error');
+          return const Text('');
         } else {
           Uint8List data = snapshot.data!;
           String mimeType = lookupMimeType('', headerBytes: data) ?? '';
@@ -71,7 +71,8 @@ class _FilePreviewState extends State<FilePreview> {
               },
             );
           } else {
-            return const Text('Unsupported file type');
+            return const Text(
+                'No se puede mostrar el archivo o no hay archivo');
           }
         }
       },
