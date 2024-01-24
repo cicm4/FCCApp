@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:fccapp/services/level_2/scholarship.dart';
+import 'package:fccapp/services/data/scholarship.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
