@@ -1,3 +1,4 @@
+import 'package:fccapp/pages/calendars/calendar_home.dart';
 import 'package:fccapp/pages/scholarships/scholarship_home.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
@@ -20,6 +21,7 @@ Map<String, WidgetBuilder> getAppRoutes(
           scholarshipService: ScholarshipService.create(
               userService: UserService(), dbService: dbs),
           st: st,
-        )
+        ),
+    '/calendarHome': (context) => const CalendarHome(),
   };
 }

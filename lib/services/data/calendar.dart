@@ -1,18 +1,18 @@
 class Calendar {
-  List<String> scheduledDays;
-  Map<String, String?> attendance;
+  List<dynamic> scheduledDays;
+  Map<String, dynamic> attendance;
 
   Calendar({required this.scheduledDays, required this.attendance});
 
-  List<String>? get getScheduledDays => scheduledDays;
+  List<dynamic>? get getScheduledDays => scheduledDays;
 
-  Map<String, String?>? get getAttendance => attendance;
+  Map<String, dynamic>? get getAttendance => attendance;
 
-  Future<void> setAttendance(Map<String, String?> newAttendance) async {
+  Future<void> setAttendance(Map<String, dynamic> newAttendance) async {
     attendance = newAttendance;
   }
 
-  Future<void> setScheduledDays(List<String> newScheduledDays) async {
+  Future<void> setScheduledDays(List<dynamic> newScheduledDays) async {
     scheduledDays = newScheduledDays;
   }
 

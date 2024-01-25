@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Event {
+class LocalEvent {
   bool work;
 
   Timestamp startTime;
@@ -9,14 +9,14 @@ class Event {
 
   int numWorking;
 
-  List<String>? attendees;
+  List<String> attendees;
 
-  Event(
+  LocalEvent(
       {required this.work,
       required this.startTime,
       required this.endTime,
       required this.numWorking,
-      this.attendees});
+      required this.attendees});
 
   Map<String, dynamic> toMap() => {
         'work': work,
@@ -27,7 +27,7 @@ class Event {
       };
 
   //from Map
-  factory Event.fromMap(Map<String, dynamic> data) => Event(
+  factory LocalEvent.fromMap(Map<String, dynamic> data) => LocalEvent(
         work: data['work'] ?? false, // Assuming default values in case of null
         startTime: data['startTime']
             as Timestamp, // Type casting, consider error handling

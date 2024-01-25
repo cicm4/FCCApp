@@ -3,6 +3,7 @@ import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/Level_1/admin_service.dart';
 import 'package:fccapp/services/Level_1/authentication_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -96,9 +97,31 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 20),
-            LinearProgressIndicator(
-              value: scholarshipStatus / 4,
-            ), // Add some spacing
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: LinearProgressIndicator(
+                value: scholarshipStatus / 4,
+                color: Colors.green[800],
+                minHeight: 10.0,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(UserService().user!.email!),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () async {
+                await Navigator.pushNamed(context, '/calendarHome');
+              },
+              child: const Text(
+                'Calendario',
+                style: TextStyle(
+                  fontSize: 14, // Making text small
+                  color: Colors.blue, // Text color blue
+                  decoration: TextDecoration.underline, // Underlined text
+                ),
+              ),
+            ),
+            const SizedBox(height: 20), // Add some spacing
           ],
         ),
       ),

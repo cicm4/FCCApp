@@ -1,11 +1,12 @@
+import 'package:calendar_view/calendar_view.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
-import 'package:fccapp/services/data/event.dart';
+import 'package:fccapp/services/data/localEvent.dart';
 import 'package:fccapp/services/level_2/calendar_service.dart';
 import 'package:flutter/foundation.dart';
 
 class EventService {
   DBService dbs;
-  Map<String, Event> events;
+  Map<String, LocalEvent> events;
 
   EventService({required this.dbs, required this.events});
 
@@ -14,7 +15,8 @@ class EventService {
     try {
       for (String event in cs.calendar.scheduledDays) {
         dbs.getFromDB(path: 'events', data: event).then((value) {
-          events.addAll(<String, Event>{event: Event.fromMap(value!)});
+          events
+              .addAll(<String, LocalEvent>{event: LocalEvent.fromMap(value!)});
         });
       }
     } catch (e) {
@@ -24,7 +26,7 @@ class EventService {
     }
   }
 
-  Event? getEventByName(String name) {
+  LocalEvent? getEventByName(String name) {
     try {
       return events[name];
     } catch (e) {
