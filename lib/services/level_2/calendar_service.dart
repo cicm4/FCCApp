@@ -51,14 +51,12 @@ class CalendarService {
   List<CalendarEventData> getEvents() {
     List<CalendarEventData> eventsList = [];
     calendar.attendance.forEach((key, value) {
-      //first get the name of the event
-      String name = key;
-      //the name encodes the date: 'DDMMYYYY'
-      int day = int.parse(name.substring(0, 2));
-      int month = int.parse(name.substring(2, 4));
-      int year = int.parse(name.substring(4, 8));
+      //the key encodes the date: 'DDMMYYYY'
+      int day = int.parse(key.substring(0, 2));
+      int month = int.parse(key.substring(2, 4));
+      int year = int.parse(key.substring(4, 8));
       //then get the start and end times, this is based on the last letter of the name: 'M' is morning (8AM to 2PM), 'A' is afternoon (2PM to 8PM)
-      String lastLetter = name.substring(name.length - 1);
+      String lastLetter = key.substring(key.length - 1);
       //case swich for the last letter
       switch (lastLetter) {
         case 'M':
@@ -66,7 +64,7 @@ class CalendarService {
             date: DateTime(year, month, day),
             startTime: DateTime(year, month, day, 8),
             endTime: DateTime(year, month, day, 14),
-            title: name,
+            title: 'turno',
             description: 'Morning shift',
           ));
           break;
@@ -75,7 +73,7 @@ class CalendarService {
             date: DateTime(year, month, day),
             startTime: DateTime(year, month, day, 14),
             endTime: DateTime(year, month, day, 20),
-            title: name,
+            title: 'turno',
             description: 'Afternoon shift',
           ));
           break;
@@ -84,7 +82,7 @@ class CalendarService {
             date: DateTime(year, month, day),
             startTime: DateTime(year, month, day, 8),
             endTime: DateTime(year, month, day, 20),
-            title: name,
+            title: 'turno',
             description: 'All day event',
           ));
           break;

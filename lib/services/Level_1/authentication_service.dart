@@ -145,28 +145,34 @@ class AuthService {
         'location': location,
       };
 
-      var newCalendar = {
-        'uid': uid,
-        'isReady': false,
-      };
-
-      var scholarship = {
-        'uid': uid,
-        'gid': gid,
-      };
-
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
 
-      await dbs.addEntryToDBWithName(
-          path: 'scholarships', entry: scholarship, name: uid);
+      await _addCalendar(uid);
 
-      await dbs.addEntryToDBWithName(
-          path: 'calendars', entry: newCalendar, name: uid);
+      await _addScholarship(uid, gid);
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+  }
+
+  Future<void> _addScholarship(String uid, String? gid) async {
+    var scholarship = {
+      'uid': uid,
+      'gid': gid,
+    };
+    await dbs.addEntryToDBWithName(
+        path: 'scholarships', entry: scholarship, name: uid);
+  }
+
+  Future<void> _addCalendar(String uid) async {
+    var newCalendar = {
+      'attendance': {},
+      'scheduledDays': [],
+    };
+    await dbs.addEntryToDBWithName(
+        path: 'calendars', entry: newCalendar, name: uid);
   }
 
   /// Check if a user is in the database.

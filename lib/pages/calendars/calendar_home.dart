@@ -42,18 +42,27 @@ class _CalendarHomeState extends State<CalendarHome> {
                   padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
                   child: WeekView(
                     controller: eventController,
+
                     eventTileBuilder: (date, events, boundary, start, end) {
                       return ListView.builder(
                         itemCount: events.length,
                         itemBuilder: (context, index) {
                           final event = events[index];
                           return Container(
+                            height: 1000,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue),
+                              color: Colors.blue[200],
+                              border: Border.all(
+                                  color: const Color.fromARGB(
+                                      255, 144, 202, 249)), //blue[200]
                             ),
-                            child: ListTile(
-                              title: Text(event.title),
-                              subtitle: Text(event.description),
+                            child: Center(
+                              child: ListTile(
+                                title: Text(
+                                  event.title,
+                                  selectionColor: Colors.black,
+                                ),
+                              ),
                             ),
                           );
                         },
