@@ -55,7 +55,7 @@ enum UrlFileType {
 ///   fileType: UrlFileType.matriculaURL,
 ///   storageService: storageService,
 /// );
-/// ``
+/// ```
 class ScholarshipService {
   /// The scholarship.
   Scholarship? scholarship;

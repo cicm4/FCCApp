@@ -65,7 +65,6 @@ class CalendarService {
             startTime: DateTime(year, month, day, 8),
             endTime: DateTime(year, month, day, 14),
             title: 'turno',
-            description: 'Morning shift',
           ));
           break;
         case 'A':
@@ -73,8 +72,7 @@ class CalendarService {
             date: DateTime(year, month, day),
             startTime: DateTime(year, month, day, 14),
             endTime: DateTime(year, month, day, 20),
-            title: 'turno',
-            description: 'Afternoon shift',
+            title: 'Turno',
           ));
           break;
         default:

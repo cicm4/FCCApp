@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBZrxLzFH7R0KD85FuRBOOPa9wP3gu6fwA',
-    appId: '1:871528450790:android:2b307c481d066f1588c927',
-    messagingSenderId: '871528450790',
-    projectId: 'fccapp-9b8e9',
-    storageBucket: 'fccapp-9b8e9.appspot.com',
+    apiKey: 'AIzaSyDJdqxRuH81e8S5pZCgK4TWnN8aOrFUUx4',
+    appId: '1:356823887457:android:d8eb05e98e60219f404420',
+    messagingSenderId: '356823887457',
+    projectId: 'fccapp-4220d',
+    storageBucket: 'fccapp-4220d.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBh5xJBxSrHFFJ2qOyGO3QIytSy4HdpDJE',
-    appId: '1:871528450790:ios:e557de1c993c08e788c927',
-    messagingSenderId: '871528450790',
-    projectId: 'fccapp-9b8e9',
-    storageBucket: 'fccapp-9b8e9.appspot.com',
+    apiKey: 'AIzaSyCN-_pOhRjNSpDmvRRdbJnfv7uVGHsQuxk',
+    appId: '1:356823887457:ios:6b6106af6b5daadf404420',
+    messagingSenderId: '356823887457',
+    projectId: 'fccapp-4220d',
+    storageBucket: 'fccapp-4220d.appspot.com',
     iosBundleId: 'com.example.fccapp',
   );
 }

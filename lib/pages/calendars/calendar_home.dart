@@ -12,11 +12,19 @@ class CalendarHome extends StatefulWidget {
 }
 
 class _CalendarHomeState extends State<CalendarHome> {
-  final Future<List<CalendarEventData>> _eventsFuture =
-      CalendarService.create(DBService(), UserService())
-          .then((calendarService) {
-    return calendarService.getEvents();
-  });
+  late final Future<List<CalendarEventData>> _eventsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initEvents();
+  }
+
+  void _initEvents() {
+    _eventsFuture = CalendarService.create(DBService(), UserService()).then(
+      (calendarService) => calendarService.getEvents(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,80 +33,92 @@ class _CalendarHomeState extends State<CalendarHome> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
+        }
+        if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        } else {
-          final events = snapshot.data!;
-          final eventController = EventController()..addAll(events);
+        }
 
-          return CalendarControllerProvider(
-            controller: eventController,
-            child: Scaffold(
-              appBar: AppBar(
-                shadowColor: Colors.grey[900],
-              ),
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-                  child: WeekView(
-                    controller: eventController,
+        final events = snapshot.data ?? [];
+        final eventController = EventController()..addAll(events);
 
-                    eventTileBuilder: (date, events, boundary, start, end) {
-                      return ListView.builder(
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          return Container(
-                            height: 1000,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[200],
-                              border: Border.all(
-                                  color: const Color.fromARGB(
-                                      255, 144, 202, 249)), //blue[200]
-                            ),
-                            child: Center(
-                              child: ListTile(
-                                title: Text(
-                                  event.title,
-                                  selectionColor: Colors.black,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    fullDayEventBuilder: (events, date) {
-                      return ListView.builder(
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue),
-                            ),
-                            child: ListTile(
-                              title: Text(event.title),
-                              subtitle: Text(event.description),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    backgroundColor:
-                        const Color.fromARGB(255, 33, 33, 33), //gray[800]
-                    headerStyle: const HeaderStyle(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 33, 33, 33), //gray[800]
-                      ),
-                    ),
-                  ),
+        return CalendarView(eventController: eventController);
+      },
+    );
+  }
+}
+
+class CalendarView extends StatelessWidget {
+  final EventController eventController;
+
+  const CalendarView({Key? key, required this.eventController})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CalendarControllerProvider(
+      controller: eventController,
+      child: Scaffold(
+        appBar: AppBar(
+          shadowColor: Colors.grey[900],
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: WeekView(
+              controller: eventController,
+              eventTileBuilder: _eventTileBuilder,
+              fullDayEventBuilder: _fullDayEventBuilder,
+              backgroundColor:
+                  const Color.fromARGB(255, 33, 33, 33), //gray[800]
+              headerStyle: const HeaderStyle(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 33, 33, 33), //gray[800]
                 ),
               ),
             ),
-          );
-        }
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _eventTileBuilder(
+    DateTime date,
+    List<CalendarEventData> events,
+    Rect boundary,
+    DateTime start,
+    DateTime end,
+  ) {
+    return Column(
+      children: events.map((event) => _buildEventContainer(event)).toList(),
+    );
+  }
+
+  Widget _fullDayEventBuilder(List<CalendarEventData> events, DateTime date) {
+    return ListView.builder(
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        final event = events[index];
+        return _buildEventContainer(event);
       },
+    );
+  }
+
+  Widget _buildEventContainer(CalendarEventData event) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.blue[200],
+          border: Border.all(color: Colors.blue),
+        ),
+        child: ListTile(
+          title: Text(
+            event.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          // This ListTile will now only contain a title, but will still expand to fill the available space.
+        ),
+      ),
     );
   }
 }

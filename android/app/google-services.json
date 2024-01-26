@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "871528450790",
-    "project_id": "fccapp-9b8e9",
-    "storage_bucket": "fccapp-9b8e9.appspot.com"
+    "project_number": "356823887457",
+    "project_id": "fccapp-4220d",
+    "storage_bucket": "fccapp-4220d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:871528450790:android:2b307c481d066f1588c927",
+        "mobilesdk_app_id": "1:356823887457:android:d8eb05e98e60219f404420",
         "android_client_info": {
           "package_name": "com.example.fccapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBZrxLzFH7R0KD85FuRBOOPa9wP3gu6fwA"
+          "current_key": "AIzaSyDJdqxRuH81e8S5pZCgK4TWnN8aOrFUUx4"
         }
       ],
       "services": {
