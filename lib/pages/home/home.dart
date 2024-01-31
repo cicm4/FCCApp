@@ -3,7 +3,6 @@ import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/Level_1/admin_service.dart';
 import 'package:fccapp/services/Level_1/authentication_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

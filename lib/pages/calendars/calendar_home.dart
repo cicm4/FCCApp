@@ -63,20 +63,24 @@ class CalendarView extends StatelessWidget {
         ),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: WeekView(
-              controller: eventController,
-              eventTileBuilder: _eventTileBuilder,
-              fullDayEventBuilder: _fullDayEventBuilder,
-              backgroundColor:
-                  const Color.fromARGB(255, 33, 33, 33), //gray[800]
-              headerStyle: const HeaderStyle(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 33, 33, 33), //gray[800]
-                ),
-              ),
-            ),
-          ),
+              padding: const EdgeInsets.all(10.0), child: calendarActual()),
+        ),
+      ),
+    );
+  }
+
+  Widget calendarActual() {
+    return WeekView(
+      controller: eventController,
+      heightPerMinute: .7,
+      hourIndicatorSettings: HourIndicatorSettings.none(),
+
+      eventTileBuilder: _eventTileBuilder,
+      fullDayEventBuilder: _fullDayEventBuilder,
+      backgroundColor: const Color.fromARGB(255, 33, 33, 33), //gray[800]
+      headerStyle: const HeaderStyle(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 33, 33, 33), //gray[800]
         ),
       ),
     );
