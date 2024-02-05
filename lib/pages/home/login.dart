@@ -81,7 +81,8 @@ class _LoginState extends State<Login> {
                     child: const SafeArea(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(8, 25, 8, 0),
-                        child: FlutterLogo(),
+                        child: Image(
+                            image: AssetImage('assets/largeLogoWhite.png')),
                       ),
                     ),
                   ),
