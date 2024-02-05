@@ -1,3 +1,4 @@
+// ignore: dangling_library_doc_comments
 /**
  * import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';

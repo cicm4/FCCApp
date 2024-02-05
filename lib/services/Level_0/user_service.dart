@@ -8,10 +8,10 @@ class UserService {
   /// Stream of authentication state changes.
   ///
   /// This stream emits an event whenever the user signs in or out.
-  final userStream = FirebaseAuth.instance.authStateChanges();
+  final Stream<User?> userStream = FirebaseAuth.instance.authStateChanges();
 
   /// Current user instance.
   ///
   /// This is the instance of the currently signed-in user. It is `null` if no user is signed in.
-  final user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
 }

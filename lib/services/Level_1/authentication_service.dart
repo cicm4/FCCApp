@@ -13,6 +13,9 @@ class AuthService {
   //database service that is used to add new users to firestore
   DBService dbs;
 
+  // Stream of authentication state changes.
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   /// Sign in with email and password.
   ///
   /// This method attempts to sign in a user using their email and password.
@@ -27,45 +30,53 @@ class AuthService {
     try {
       // Create a UserService instance
       UserService us = UserService();
-      // Attempt to sign in the user using their email and password
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
+      // Attempt to sign in the user using their email and password using the firebase library method
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: emailAddress, password: password);
       // Check if the user is in the database
       bool isUserInDB = await _isUserInDB(uid: us.user?.uid);
       // If the user is not found in the database, add them
 
       if (!isUserInDB) {
-        return 'No se encontró el usuario en la base de datos';
+        throw FirebaseAuthException(
+            code: 'user-not-found', message: 'User not found');
       }
       // If the sign-in process is successful, return true
       return true;
     } on FirebaseAuthException catch (e) {
-      // Handle specific FirebaseAuth exceptions
-      if (e.code == 'user-not-found') {
-        if (kDebugMode) {
-          print('No user found for that email.');
-        }
-        // Return the error code
-        return "No se encontro el usuario";
-      } else if (e.code == 'wrong-password') {
-        if (kDebugMode) {
-          print('Wrong password provided for that user.');
-        }
-        // Return the error code
-        return "Contraseña incorrecta";
-      } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        if (kDebugMode) {
-          print('invalid credentials for login');
-        }
-        // Return the error code
-        return "Credenciales de inicio de sesión no válidas";
-      } else {
-        if (kDebugMode) {
-          print(e.code);
-        }
-        // Return the error code
-        return e.code;
-      }
+      _handleFirebaseAuthException(e);
+    } catch (e) {
+      _handleGeneralException(e);
+    }
+  }
+
+  static String _handleGeneralException(e) {
+    if (kDebugMode) {
+      print(e);
+    }
+    return 'Ocurrió un error inesperado. Por favor, intente de nuevo.';
+  }
+
+  /// Handles FirebaseAuthExceptions by providing user-friendly error messages.
+  ///
+  /// @param e The FirebaseAuthException encountered during sign-in or registration.
+  /// @return A user-friendly error message based on the exception code.
+  String _handleFirebaseAuthException(FirebaseAuthException e) {
+    if (kDebugMode) {
+      print(e); // Only print errors in debug mode.
+    }
+    switch (e.code) {
+      case 'user-not-found':
+      case 'wrong-password':
+        return 'Correo electrónico o contraseña incorrectos.';
+      case 'weak-password':
+        return 'La contraseña proporcionada es demasiado débil.';
+      case 'email-already-in-use':
+        return 'Ya existe una cuenta para ese correo electrónico.';
+      case 'invalid-email':
+        return 'La dirección de correo electrónico no es válida.';
+      default:
+        return 'Ocurrió un error inesperado. Por favor, intente de nuevo.';
     }
   }
 
@@ -76,9 +87,7 @@ class AuthService {
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      _handleGeneralException(e);
     }
   }
 
@@ -150,10 +159,10 @@ class AuthService {
       await _addCalendar(uid);
 
       await _addScholarship(uid, gid);
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseAuthException(e);
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      _handleGeneralException(e);
     }
   }
 
@@ -224,22 +233,15 @@ class AuthService {
       // Add the new user to the database
       await _addNewUserToDB(
           name: name, phone: phone, sport: sport, gid: gid, location: location);
+
+      // If the user is successfully registered, return 'Success'
+      return 'Success';
     } on FirebaseAuthException catch (e) {
-      // Handle specific FirebaseAuth exceptions
-      if (e.code == 'weak-password') {
-        return 'La contraseña proporcionada es demasiado débil..';
-      } else if (e.code == 'email-already-in-use') {
-        return 'La cuenta ya existe para ese correo electrónico.';
-      } else if (e.code == 'invalid-email') {
-        return 'Dirección de correo electrónico no válida';
-      } else {
-        return 'Error: ${e.toString()}';
-      }
+      // Handle FirebaseAuthExceptions
+      return _handleFirebaseAuthException(e);
     } catch (e) {
       // Handle any other exceptions
-      return 'Error: ${e.toString()}';
+      return _handleGeneralException(e);
     }
-    // If the user is successfully registered, return 'Success'
-    return 'Success';
   }
 }

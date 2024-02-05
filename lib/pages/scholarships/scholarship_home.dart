@@ -8,10 +8,10 @@ class ScholarshipHome extends StatefulWidget {
   final StorageService st;
 
   const ScholarshipHome({
-    Key? key,
+    super.key,
     required this.scholarshipService,
     required this.st,
-  }) : super(key: key);
+  });
 
   @override
   State<ScholarshipHome> createState() => _ScholarshipHomeState();

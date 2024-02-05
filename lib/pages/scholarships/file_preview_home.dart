@@ -13,11 +13,11 @@ class FilePreview extends StatefulWidget {
   final StorageService storageService;
 
   const FilePreview({
-    Key? key,
+    super.key,
     required this.fileType,
     required this.scholarshipService,
     required this.storageService,
-  }) : super(key: key);
+  });
 
   @override
   State<FilePreview> createState() => _FilePreviewState();

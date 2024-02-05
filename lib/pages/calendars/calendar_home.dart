@@ -50,8 +50,7 @@ class _CalendarHomeState extends State<CalendarHome> {
 class CalendarView extends StatelessWidget {
   final EventController eventController;
 
-  const CalendarView({Key? key, required this.eventController})
-      : super(key: key);
+  const CalendarView({super.key, required this.eventController});
 
   @override
   Widget build(BuildContext context) {
