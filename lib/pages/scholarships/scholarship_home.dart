@@ -23,7 +23,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
   String? bankAccountText = '';
   bool isUploading = false;
   dynamic dataFromDatabase;
-  bool isBankAccountFile = true;
+  bool isBankAccountFile = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
         } else {
           ScholarshipService scholarshipService = snapshot.data!;
           dataFromDatabase = scholarshipService.getScholarshipData();
-          bankAccountText = scholarshipService.getBankAccount();
+          bankAccountText = scholarshipService.getBankaccount();
+          isBankAccountFile =
+              scholarshipService.getSmartBankDetailAURLFile(isBankAccountFile);
 
           return Scaffold(
             appBar: AppBar(
@@ -166,7 +168,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           );
         } else {
           uploadResult =
-              await scholarshipService.setBankAccount(bankAccountText);
+              await scholarshipService.setBankaccount(bankAccountText);
         }
       }
 
@@ -216,8 +218,12 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           title: const Text('Numero de Banco',
               style: TextStyle(color: Colors.white)),
           trailing: Icon(
-            dataFromDatabase['bankaccount'] != null ? Icons.check : Icons.close,
-            color: dataFromDatabase['bankaccount'] != null
+            (dataFromDatabase['bankaccountURL'] != null ||
+                    dataFromDatabase['bankaccount'] != null)
+                ? Icons.check
+                : Icons.close,
+            color: (dataFromDatabase['bankaccountURL'] != null ||
+                    dataFromDatabase['bankaccount'] != null)
                 ? Colors.green
                 : Colors.red,
           ),

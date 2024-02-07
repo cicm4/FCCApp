@@ -41,7 +41,7 @@ class _FilePreviewState extends State<FilePreview> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Uint8List>(
+    return FutureBuilder<Uint8List?>(
       future: widget.scholarshipService.getURLFile(
         fileType: widget.fileType,
         storageService: widget.storageService,
@@ -52,10 +52,13 @@ class _FilePreviewState extends State<FilePreview> {
         } else if (snapshot.hasError) {
           return const Text('');
         } else {
-          Uint8List data = snapshot.data!;
+          Uint8List? data = snapshot.data;
           String mimeType = lookupMimeType('', headerBytes: data) ?? '';
 
-          if (mimeType.startsWith('image/')) {
+          if (data == null) {
+            return const Text(
+                'No se puede mostrar el archivo o no hay archivo');
+          } else if (mimeType.startsWith('image/')) {
             return Image.memory(data);
           } else if (mimeType == 'application/pdf') {
             return FutureBuilder<Widget>(

@@ -66,6 +66,9 @@ class ScholarshipService {
   /// The user service used to get the current user's data.
   UserService userService;
 
+//used for getters and setters
+  bool smartCycle = false;
+
   /// Private constructor used by the `create` method to create a new `ScholarshipService`.
   ScholarshipService._(
       {this.scholarship, required this.userService, required this.dbService});
@@ -113,25 +116,45 @@ class ScholarshipService {
   /// Throws:
   ///   - `Exception` if an invalid `UrlFileType` is provided.
   ///   - `Exception` if there is an error fetching the file.
-  Future<Uint8List> getURLFile(
+  Future<Uint8List?> getURLFile(
       {required UrlFileType fileType,
       required StorageService storageService}) async {
     try {
-      String path;
-      String data;
+      String? path;
+      String? data;
+      if (kDebugMode) {
+        print(
+            'calling getURLFile from scholarshipService with fileType: $fileType');
+      }
       switch (fileType) {
         case UrlFileType.matriculaURL:
-          path = scholarship!.matriculaURL!;
-          data = scholarship!.matriculaURLName!;
+          if (kDebugMode) {
+            print(
+                'calling getURLFile from scholarshipService with path: ${scholarship!.matriculaURL} and data: ${scholarship!.matriculaURLName}');
+          }
+          path = scholarship!.matriculaURL;
+          data = scholarship!.matriculaURLName;
         case UrlFileType.horarioURL:
-          path = scholarship!.horarioURL!;
-          data = scholarship!.horarioURLName!;
+          if (kDebugMode) {
+            print(
+                'calling getURLFile from scholarshipService with path: ${scholarship!.matriculaURL} and data: ${scholarship!.matriculaURLName}');
+          }
+          path = scholarship!.horarioURL;
+          data = scholarship!.horarioURLName;
         case UrlFileType.soporteURL:
-          path = scholarship!.soporteURL!;
-          data = scholarship!.soporteURLName!;
+          if (kDebugMode) {
+            print(
+                'calling getURLFile from scholarshipService with path: ${scholarship!.matriculaURL} and data: ${scholarship!.matriculaURLName}');
+          }
+          path = scholarship!.soporteURL;
+          data = scholarship!.soporteURLName;
         case UrlFileType.bankaccount:
-          path = scholarship!.bankaccount!;
-          data = scholarship!.bankaccountName!;
+          if (kDebugMode) {
+            print(
+                'calling getURLFile from scholarshipService with path: ${scholarship!.matriculaURL} and data: ${scholarship!.matriculaURLName}');
+          }
+          path = scholarship!.bankaccountURL;
+          data = scholarship!.bankaccountName;
         default: // Should never happen
           throw Exception('Invalid UrlFileType');
       }
@@ -139,9 +162,12 @@ class ScholarshipService {
         print(
             'calling getFileFromST from storageService with path: $path and data: $data');
       }
-      final Uint8List fileData =
-          await storageService.getFileFromST(path: path, data: data);
-      return fileData;
+
+      if (data != null && path != null) {
+        return await storageService.getFileFromST(path: path, data: data);
+      } else {
+        return null;
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -244,8 +270,8 @@ class ScholarshipService {
           fileTypeName = 'soporteURLName';
           break;
         case UrlFileType.bankaccount:
-          fileType = 'bankaccount';
-          fileTypeName = 'bankAccountName';
+          fileType = 'bankaccountURL';
+          fileTypeName = 'bankaccountName';
           break;
       }
       try {
@@ -310,9 +336,18 @@ class ScholarshipService {
   /// `true` if the bank detail is a URL file, `false` otherwise and `false` if an error is thrown.
   bool getBankDetailAURLFile() {
     try {
-      return scholarship?.getBankDetailAURLFile();
+      return scholarship!.getBankDetailAURLFile();
     } catch (e) {
       return false;
+    }
+  }
+
+  bool getSmartBankDetailAURLFile(bool isFile) {
+    if (!smartCycle) {
+      smartCycle = true;
+      return getBankDetailAURLFile();
+    } else {
+      return isFile;
     }
   }
 
@@ -320,15 +355,15 @@ class ScholarshipService {
     scholarship?.setBankDetailAURLFile(isFile);
   }
 
-  String? getBankAccount() {
+  String? getBankaccount() {
     return scholarship?.bankaccount;
   }
 
   //sets the text for the bank account asuming that the bank account is not a file
-  Future<bool> setBankAccount(String? bankAccount) async {
+  Future<bool> setBankaccount(String? bankaccount) async {
     try {
       var data = await getScholarshipData();
-      data['bankaccount'] = bankAccount;
+      data['bankaccount'] = bankaccount;
       await dbService.addEntryToDBWithName(
           path: 'scholarships', entry: data, name: UserService().user!.uid);
       return true;

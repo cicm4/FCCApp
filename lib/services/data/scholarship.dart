@@ -62,6 +62,11 @@ class Scholarship {
   /// This is the bank account number where the scholarship funds should be deposited. It is used for payment purposes.
   final String? bankaccount;
 
+  /// The URL of the bank account.
+  ///
+  /// This is the URL where the bank account document for the scholarship can be found. It is stored in Firebase Storage and can be used to download the document.
+  final String? bankaccountURL;
+
   /// The Name of the bank account.
   ///
   /// This is the name associated with the bank account. It is used for display purposes.
@@ -109,8 +114,11 @@ class Scholarship {
     required this.horarioURLName,
     required this.soporteURLName,
     required this.bankaccountName,
-    required this.isBankDataFile,
-  });
+    required this.bankaccountURL,
+    this.isBankDataFile,
+  }) {
+    isBankDataFile ??= false;
+  }
 
   /// Creates a new `Scholarship` from a map of data.
   ///
@@ -137,11 +145,12 @@ class Scholarship {
       matriculaURL: data['matriculaURL'],
       horarioURL: data['horarioURL'],
       soporteURL: data['soporteURL'],
+      bankaccountURL: data['bankaccountURL'],
       bankaccount: data['bankaccount'],
       matriculaURLName: data['matriculaURLName'],
       horarioURLName: data['horarioURLName'],
       soporteURLName: data['soporteURLName'],
-      bankaccountName: data['bankAccountName'],
+      bankaccountName: data['bankaccountName'],
       isBankDataFile: data['isBankDataFile'],
     );
   }
@@ -183,7 +192,7 @@ class Scholarship {
     if (soporteURL != null) {
       status++;
     }
-    if (bankaccount != null) {
+    if (bankaccountURL != null || bankaccount != null) {
       status++;
     }
     return status;
@@ -222,6 +231,7 @@ class Scholarship {
       'matriculaURL': matriculaURL,
       'horarioURL': horarioURL,
       'soporteURL': soporteURL,
+      'bankaccountURL': bankaccountURL,
       'bankaccount': bankaccount,
       'matriculaURLName': matriculaURLName,
       'horarioURLName': horarioURLName,
