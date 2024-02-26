@@ -62,20 +62,36 @@ class CalendarView extends StatelessWidget {
         ),
         body: Center(
           child: Padding(
-              padding: const EdgeInsets.all(10.0), child: calendarActual()),
+              padding: const EdgeInsets.all(10.0),
+              child: calendarActual(context)),
         ),
       ),
     );
   }
 
-  Widget calendarActual() {
+  Widget calendarActual(BuildContext context) {
     return WeekView(
       controller: eventController,
       heightPerMinute: .7,
       hourIndicatorSettings: HourIndicatorSettings.none(),
-
-      eventTileBuilder: _eventTileBuilder,
-      fullDayEventBuilder: _fullDayEventBuilder,
+      eventTileBuilder: (date, events, boundary, start, end) {
+        // Inline builder logic here, with access to context
+        return Column(
+          children: events
+              .map((event) => _buildEventContainer(context, event))
+              .toList(),
+        );
+      },
+      fullDayEventBuilder: (events, date) {
+        // Inline builder logic here, with access to context
+        return ListView.builder(
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            final event = events[index];
+            return _buildEventContainer(context, event);
+          },
+        );
+      },
       backgroundColor: const Color.fromARGB(255, 33, 33, 33), //gray[800]
       headerStyle: const HeaderStyle(
         decoration: BoxDecoration(
@@ -85,43 +101,63 @@ class CalendarView extends StatelessWidget {
     );
   }
 
-  Widget _eventTileBuilder(
-    DateTime date,
-    List<CalendarEventData> events,
-    Rect boundary,
-    DateTime start,
-    DateTime end,
-  ) {
-    return Column(
-      children: events.map((event) => _buildEventContainer(event)).toList(),
-    );
-  }
+  Widget _buildEventContainer(BuildContext context, CalendarEventData event) {
+    int time =
+        event.endTime!.getTotalMinutes - event.startTime!.getTotalMinutes;
+    const double heightPerMinute = 0.7;
 
-  Widget _fullDayEventBuilder(List<CalendarEventData> events, DateTime date) {
-    return ListView.builder(
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        final event = events[index];
-        return _buildEventContainer(event);
-      },
-    );
-  }
+    const int paddingHeight = 8;
 
-  Widget _buildEventContainer(CalendarEventData event) {
-    return Expanded(
+    final double containerHeight = (time * heightPerMinute) - paddingHeight;
+
+    return GestureDetector(
+      onTap: () => _showEventDetailsBottomSheet(context, event),
       child: Container(
+        margin: const EdgeInsets.all(4.0),
+        height: containerHeight,
+        padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: Colors.blue[200],
           border: Border.all(color: Colors.blue),
-        ),
-        child: ListTile(
-          title: Text(
-            event.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          // This ListTile will now only contain a title, but will still expand to fill the available space.
+          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
+    );
+  }
+
+  void _showEventDetailsBottomSheet(
+      BuildContext context, CalendarEventData event) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(event.title),
+                  onTap: () => {}),
+              ListTile(
+                leading: const Icon(Icons.check_circle_outline),
+                title: const Text('Confirm Attendance'),
+                onTap: () {
+                  // Handle attendance confirmation here
+                  Navigator.of(context).pop(); // Close the bottom sheet
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.swap_horiz),
+                title: const Text('Look for a Replacement'),
+                onTap: () {
+                  // Handle looking for a replacement here
+                  Navigator.of(context).pop(); // Close the bottom sheet
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
