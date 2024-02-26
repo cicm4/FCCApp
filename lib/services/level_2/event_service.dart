@@ -12,7 +12,7 @@ class EventService {
   Future<void> getEventsInUserCalendar(CalendarService cs) async {
     //loops over every event in the calendarService and looks for them in DBService in the events section, then adds them to the events list as new Events
     try {
-      for (String event in cs.calendar.scheduledDays) {
+      for (String event in cs.calendar.attendance.keys) {
         dbs.getFromDB(path: 'events', data: event).then((value) {
           events
               .addAll(<String, LocalEvent>{event: LocalEvent.fromMap(value!)});

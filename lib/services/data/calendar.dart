@@ -1,10 +1,9 @@
+import 'package:fccapp/services/data/personalEvent.dart';
+
 class Calendar {
-  List<dynamic> scheduledDays;
   Map<String, dynamic> attendance;
 
-  Calendar({required this.scheduledDays, required this.attendance});
-
-  List<dynamic>? get getScheduledDays => scheduledDays;
+  Calendar({required this.attendance});
 
   Map<String, dynamic>? get getAttendance => attendance;
 
@@ -12,21 +11,20 @@ class Calendar {
     attendance = newAttendance;
   }
 
-  Future<void> setScheduledDays(List<dynamic> newScheduledDays) async {
-    scheduledDays = newScheduledDays;
-  }
-
-  Future<void> setAttendanceFromMap(Map<String, dynamic> data) async {
-    attendance = data['attendance'];
-  }
-
-  Future<void> setScheduledDaysFromMap(Map<String, dynamic> data) async {
-    scheduledDays = data['scheduledDays'];
+  Future<void> setAttendanceFromList(List<PersonalEvent> data) async {
+    attendance = {};
+    for (PersonalEvent element in data) {
+      String date = element.day + element.month + element.year + element.time;
+      attendance[date] = {
+        'start': element.startTime,
+        'end': element.endTime,
+        'status': element.status
+      };
+    }
   }
 
   Map<String, dynamic> getCalendarData() {
     return {
-      'scheduledDays': scheduledDays,
       'attendance': attendance,
     };
   }
@@ -34,7 +32,6 @@ class Calendar {
   //from Map
   factory Calendar.fromMap(Map<String, dynamic> data) {
     return Calendar(
-      scheduledDays: data['scheduledDays'],
       attendance: data['attendance'],
     );
   }

@@ -3,6 +3,8 @@ import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/Level_1/db_user_service.dart';
 import 'package:fccapp/services/data/calendar.dart';
+import 'package:fccapp/services/data/personalEvent.dart';
+import 'package:flutter/foundation.dart';
 
 class CalendarService {
   DBService dbs;
@@ -32,8 +34,23 @@ class CalendarService {
         entry: calendar.getCalendarData(), path: 'calendars', name: uid!);
   }
 
-  Future<void> setScheduledDaysToDB(List<String> newScheduledDays) async {
-    calendar.setScheduledDays(newScheduledDays);
+  Future<bool> updateStatusInDB(int status, String event) async {
+    try {
+      calendar.attendance[event]!['status'] = status;
+      return await dbs.addEntryToDBWithName(
+          entry: calendar.getCalendarData(), path: 'calendars', name: uid!);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        return false;
+      }
+    }
+    return false;
+  }
+
+  Future<void> setScheduledDaysToDB(
+      List<PersonalEvent> newScheduledDays) async {
+    calendar.setAttendanceFromList(newScheduledDays);
     await dbs.addEntryToDBWithName(
         entry: calendar.getCalendarData(), path: 'calendars', name: uid!);
   }
@@ -44,9 +61,6 @@ class CalendarService {
   }
 
   // Setter for scheduledDays
-  set scheduledDays(List<String> newScheduledDays) {
-    calendar.setScheduledDays(newScheduledDays);
-  }
 
   List<CalendarEventData> getEvents() {
     List<CalendarEventData> eventsList = [];
