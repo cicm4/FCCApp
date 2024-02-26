@@ -56,35 +56,16 @@ class CalendarService {
       int month = int.parse(key.substring(2, 4));
       int year = int.parse(key.substring(4, 8));
       //then get the start and end times, this is based on the last letter of the name: 'M' is morning (8AM to 2PM), 'A' is afternoon (2PM to 8PM)
-      String lastLetter = key.substring(key.length - 1);
+
+      int startHour = value['start'];
+      int endHour = value['end'];
       //case swich for the last letter
-      switch (lastLetter) {
-        case 'M':
-          eventsList.add(CalendarEventData(
-            date: DateTime(year, month, day),
-            startTime: DateTime(year, month, day, 8),
-            endTime: DateTime(year, month, day, 14),
-            title: 'turno',
-          ));
-          break;
-        case 'A':
-          eventsList.add(CalendarEventData(
-            date: DateTime(year, month, day),
-            startTime: DateTime(year, month, day, 14),
-            endTime: DateTime(year, month, day, 20),
-            title: 'Turno',
-          ));
-          break;
-        default:
-          eventsList.add(CalendarEventData(
-            date: DateTime(year, month, day),
-            startTime: DateTime(year, month, day, 8),
-            endTime: DateTime(year, month, day, 20),
-            title: 'turno',
-            description: 'All day event',
-          ));
-          break;
-      }
+      eventsList.add(CalendarEventData(
+        date: DateTime(year, month, day),
+        startTime: DateTime(year, month, day, startHour),
+        endTime: DateTime(year, month, day, endHour),
+        title: 'turno',
+      ));
     });
     return eventsList;
   }

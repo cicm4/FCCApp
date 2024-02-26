@@ -120,6 +120,20 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () async {
+                await Navigator.pushNamed(context, '/helpHome');
+              },
+              child: const Text(
+                'Ayudas',
+                style: TextStyle(
+                  fontSize: 14, // Making text small
+                  color: Colors.blue, // Text color blue
+                  decoration: TextDecoration.underline, // Underlined text
+                ),
+              ),
+            ),
             const SizedBox(height: 20), // Add some spacing
           ],
         ),
