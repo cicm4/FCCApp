@@ -1,7 +1,8 @@
-import 'package:fccapp/services/level_2/help_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fccapp/services/level_2/help_service.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
+import 'help_button.dart';
 
 class HelpHome extends StatefulWidget {
   const HelpHome({super.key});
@@ -51,8 +52,8 @@ class _HelpHomeState extends State<HelpHome> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Your request has been sent successfully.'),
+          title: const Text('Mensaje Enviado'),
+          content: const Text('Su mensaje ha sido enviado con éxito.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -79,30 +80,34 @@ class _HelpHomeState extends State<HelpHome> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: Help.values
-                    .map((help) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0), // Adjust for visual indicator
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedHelp = help;
-                                _showTextBox = true;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.green[800] ??
-                                  Colors.green, // Fallback color
-                            ),
-                            child: Text(help.toString().split('.').last),
-                          ),
-                        ))
-                    .toList(),
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                int crossAxisCount = (constraints.maxWidth / 150).floor(); // Adjust 150 to change the button size
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: 3, // Adjust the aspect ratio as needed
+                    crossAxisSpacing: 4.0,
+                    mainAxisSpacing: 4.0,
+                  ),
+                  itemCount: Help.values.length,
+                  itemBuilder: (context, index) {
+                    final help = Help.values[index];
+                    return HelpButton(
+                      help: help,
+                      isSelected: _selectedHelp == help,
+                      onPressed: () {
+                        setState(() {
+                          _selectedHelp = help;
+                          _showTextBox = true;
+                        });
+                      },
+                    );
+                  },
+                );
+              },
             ),
           ),
           if (_showTextBox) ...[
@@ -116,12 +121,10 @@ class _HelpHomeState extends State<HelpHome> {
               ),
             ),
             ElevatedButton(
-              onPressed:
-                  _messageController.text.isNotEmpty ? _handleSend : null,
+              onPressed: _messageController.text.isNotEmpty ? _handleSend : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                    Colors.green[800] ?? Colors.green, // Fallback color
+                backgroundColor: Colors.green[800] ?? Colors.green, // Fallback color
               ),
               child: const Text('Send'),
             ),

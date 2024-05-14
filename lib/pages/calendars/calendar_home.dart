@@ -2,6 +2,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/level_2/calendar_service.dart';
+import 'package:fccapp/shared/loading.dart';
 import 'package:flutter/material.dart';
 
 class CalendarHome extends StatefulWidget {
@@ -32,7 +33,7 @@ class _CalendarHomeState extends State<CalendarHome> {
       future: _eventsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const Loading();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

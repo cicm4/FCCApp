@@ -14,7 +14,7 @@ class Calendar {
   Future<void> setAttendanceFromList(List<PersonalEvent> data) async {
     attendance = {};
     for (PersonalEvent element in data) {
-      String date = element.day + element.month + element.year + element.time;
+      String date = element.day + element.month + element.year;
       attendance[date] = {
         'start': element.startTime,
         'end': element.endTime,
@@ -31,6 +31,11 @@ class Calendar {
 
   //from Map
   factory Calendar.fromMap(Map<String, dynamic> data) {
+    //loop to print every element in attendance
+    for (String key in data['attendance'].keys) {
+      print(key);
+      print(data['attendance'][key]);
+    }
     return Calendar(
       attendance: data['attendance'],
     );

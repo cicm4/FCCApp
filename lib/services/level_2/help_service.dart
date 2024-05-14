@@ -44,4 +44,7 @@ enum Help {
   dermatologico,
   oftamologico,
   calamidad,
+  otro,
+  tutoria
 }
+
