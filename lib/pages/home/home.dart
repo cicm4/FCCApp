@@ -1,7 +1,9 @@
 import 'package:fccapp/services/Level_0/database_service.dart';
+import 'package:fccapp/services/Level_0/date_time_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
 import 'package:fccapp/services/Level_1/admin_service.dart';
 import 'package:fccapp/services/Level_1/authentication_service.dart';
+import 'package:fccapp/services/level_2/calendar_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +20,14 @@ class _HomeState extends State<Home> {
   bool isAdmin = false;
   late ScholarshipService scholarshipService;
   num scholarshipStatus = 0;
+  Future<List<Map<String, int>>>? _eventsFuture;
 
   @override
   initState() {
     super.initState();
-    // Call the checkAdmin function on widget creation
     checkAdmin();
     initScholarshipService();
+    fetchEvents();
   }
 
   Future<void> initScholarshipService() async {
@@ -39,102 +42,194 @@ class _HomeState extends State<Home> {
   void checkAdmin() {
     AdminService.isAdmin(dbService: widget.dbs, userService: UserService())
         .then((bool isAdminResult) {
-      // Set state is called to rebuild the widget with the updated isAdmin value.
       if (mounted) {
         setState(() {
           isAdmin = isAdminResult;
         });
       }
     }).catchError((error) {
-      // Handle any errors here
       if (kDebugMode) {
         print('An error occurred while checking admin status: $error');
       }
     });
   }
 
+  void fetchEvents() {
+    _eventsFuture = CalendarService.create(widget.dbs, UserService()).then(
+      (calendarService) => calendarService.getHomePageEvents(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ignore: avoid_print
-    print('Home build');
     return Scaffold(
-      body: Center(
+      appBar: AppBar(
+        title: const Text('Inicio'),
+        backgroundColor: Colors.black,
+      ),
+      body: Container(
+        color: Colors.black,
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text('Home'),
             const SizedBox(height: 20),
-            Text('$isAdmin'),
-            const SizedBox(height: 20), // Add some spacing
+            Text(
+              'Mi beca',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            LinearProgressIndicator(
+              value: scholarshipStatus / 4,
+              color: Colors.green[800],
+              minHeight: 10.0,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/scholarshipsHome');
+                initScholarshipService();
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey[800],
+              ),
+              child: const Text('Subir archivos'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Proximos turnos',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            FutureBuilder<List<Map<String, int>>>(
+              future: _eventsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No upcoming events',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+
+                final events = snapshot.data!;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    final event = events[index];
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                DateTimeFormatter.formatDate(
+                                  event["day"]!,
+                                  event["month"]!,
+                                  event["year"]!,
+                                ),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                '${DateTimeFormatter.formatTime(event["start"]!)} - ${DateTimeFormatter.formatTime(event["end"]!)}',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/calendarHome');
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey[800],
+              ),
+              child: const Text('Mi horario'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Ayudas y papeles',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/helpHome');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[800],
+                  ),
+                  child: const Text('Mis ayudas'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your request certificate function here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[800],
+                  ),
+                  child: const Text('Pedir certificado'),
+                ),
+              ],
+            ),
+            const Spacer(),
             GestureDetector(
               onTap: () {
                 // Call your sign-out function here
                 signOutUser();
               },
-              child: const Text(
-                'Sign out',
-                style: TextStyle(
-                  fontSize: 14, // Making text small
-                  color: Colors.blue, // Text color blue
-                  decoration: TextDecoration.underline, // Underlined text
+              child: const Center(
+                child: Text(
+                  'Cambiar de cuenta',
+                  style: TextStyle(
+                    fontSize: 14, // Making text small
+                    color: Colors.blue, // Text color blue
+                    decoration: TextDecoration.underline, // Underlined text
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () async {
-                await Navigator.pushNamed(context, '/scholarshipsHome');
-                initScholarshipService();
-              },
-              child: const Text(
-                'becas',
-                style: TextStyle(
-                  fontSize: 14, // Making text small
-                  color: Colors.blue, // Text color blue
-                  decoration: TextDecoration.underline, // Underlined text
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: LinearProgressIndicator(
-                value: scholarshipStatus / 4,
-                color: Colors.green[800],
-                minHeight: 10.0,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(UserService().user!.email!),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () async {
-                await Navigator.pushNamed(context, '/calendarHome');
-              },
-              child: const Text(
-                'Calendario',
-                style: TextStyle(
-                  fontSize: 14, // Making text small
-                  color: Colors.blue, // Text color blue
-                  decoration: TextDecoration.underline, // Underlined text
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () async {
-                await Navigator.pushNamed(context, '/helpHome');
-              },
-              child: const Text(
-                'Ayudas',
-                style: TextStyle(
-                  fontSize: 14, // Making text small
-                  color: Colors.blue, // Text color blue
-                  decoration: TextDecoration.underline, // Underlined text
-                ),
-              ),
-            ),
-            const SizedBox(height: 20), // Add some spacing
           ],
         ),
       ),
@@ -142,7 +237,6 @@ class _HomeState extends State<Home> {
   }
 
   void signOutUser() {
-    // Replace this function with your sign-out logic
     AuthService.signOut();
   }
 }

@@ -28,6 +28,30 @@ class CalendarService {
     );
   }
 
+  Future<List<Map<String, int>>> getHomePageEvents() async {
+
+    List<Map<String, int>> eventsList = [];
+    
+    calendar.attendance.forEach((key, value) {
+      //the key encodes the date: 'DDMMYYYY'
+      int day = int.parse(key.substring(0, 2));
+      int month = int.parse(key.substring(2, 4));
+      int year = int.parse(key.substring(4, 8));
+
+      int startHour = value['start'];
+      int endHour = value['end'];
+      //case swich for the last letter
+      eventsList.add({
+        'day': day,
+        'month': month,
+        'year': year,
+        'start': startHour,
+        'end': endHour,
+      });
+  });
+  return eventsList;
+  }
+
   Future<void> setAttendanceToDB(Map<String, String?> newAttendance) async {
     calendar.setAttendance(newAttendance);
     await dbs.addEntryToDBWithName(
