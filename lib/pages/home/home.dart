@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Mi beca',
               style: TextStyle(
                 color: Colors.white,
@@ -95,12 +95,13 @@ class _HomeState extends State<Home> {
                 initScholarshipService();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey[800],
+                backgroundColor: Colors.grey[800],
+                
               ),
               child: const Text('Subir archivos'),
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Proximos turnos',
               style: TextStyle(
                 color: Colors.white,
@@ -118,7 +119,7 @@ class _HomeState extends State<Home> {
                   return Center(
                     child: Text(
                       'Error: ${snapshot.error}',
-                      style: TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
                   );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -154,11 +155,11 @@ class _HomeState extends State<Home> {
                                   event["month"]!,
                                   event["year"]!,
                                 ),
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
                               Text(
                                 '${DateTimeFormatter.formatTime(event["start"]!)} - ${DateTimeFormatter.formatTime(event["end"]!)}',
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ],
                           ),
@@ -175,12 +176,12 @@ class _HomeState extends State<Home> {
                 await Navigator.pushNamed(context, '/calendarHome');
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey[800],
+                backgroundColor: Colors.grey[800],
               ),
               child: const Text('Mi horario'),
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Ayudas y papeles',
               style: TextStyle(
                 color: Colors.white,
@@ -197,16 +198,17 @@ class _HomeState extends State<Home> {
                     await Navigator.pushNamed(context, '/helpHome');
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[800],
+                    backgroundColor: Colors.grey[800],
                   ),
                   child: const Text('Mis ayudas'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/filesHome');
                     // Add your request certificate function here
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[800],
+                    backgroundColor: Colors.grey[800],
                   ),
                   child: const Text('Pedir certificado'),
                 ),
