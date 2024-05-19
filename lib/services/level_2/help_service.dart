@@ -48,3 +48,24 @@ enum Help {
   tutoria
 }
 
+extension HelpExtension on Help {
+  String get displayName {
+    switch (this) {
+      case Help.zapato:
+        return 'Zapato';
+      case Help.dermatologico:
+        return 'Dermatológico';
+      case Help.oftamologico:
+        return 'Oftamológico';
+      case Help.calamidad:
+        return 'Calamidad';
+      case Help.otro:
+        return 'Otro';
+      case Help.tutoria:
+        return 'Tutoría';
+      default:
+        return '';
+    }
+  }
+}
+

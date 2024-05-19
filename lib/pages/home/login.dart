@@ -1,6 +1,7 @@
-import 'package:fccapp/services/Level_1/authentication_service.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fccapp/services/Level_1/authentication_service.dart';
 import '../../shared/loading.dart';
 
 class Login extends StatefulWidget {
@@ -63,162 +64,201 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(children: [
-          // Loading screen
-          if (_isLoading)
-            const Loading()
-          else
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: const SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(8, 25, 8, 0),
-                        child: Image(
-                            image: AssetImage('assets/largeLogoWhite.png')),
-                      ),
-                    ),
+        body: _isLoading
+            ? const Loading()
+            : Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    colors: [
+                      Colors.teal.shade600,
+                      Colors.green.shade300,
+                      Colors.tealAccent.shade400,
+                    ],
                   ),
-                  Expanded(
-                      child: Container(
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              topRight: Radius.circular(30),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 80),
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                FadeInUp(
+                                  duration: Duration(milliseconds: 1000),
+                                  child: Text(
+                                    "Conectate",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 40,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                FadeInUp(
+                                  duration: Duration(milliseconds: 1300),
+                                  child: Text(
+                                    "Bienvenido",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: SingleChildScrollView(
+                          Padding(
+                            padding: EdgeInsets.only(right: 30), // Adjust the right padding as needed
+                            child: Container(
+                              width: 115, // Adjust the size as needed
+                              child: Image.asset('assets/LOGOFCC.png'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(60),
+                            topRight: Radius.circular(60),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(30),
+                          child: SingleChildScrollView(
+                            child: Form(
+                              key: _formKey,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Email',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.black,
-                                    ),
-                                    child: TextFormField(
-                                      controller: _emailController,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        prefixIcon: Icon(
-                                          Icons.email,
-                                          color: Colors.white,
-                                        ),
-                                        hintText: 'Email',
-                                        hintStyle:
-                                            TextStyle(color: Colors.white),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Por favor introduzca su correo electrónico.';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  const Text(
-                                    'Contraseña',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.black,
-                                    ),
-                                    child: TextFormField(
-                                      controller: _passwordController,
-                                      obscureText: true,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        prefixIcon: Icon(
-                                          Icons.lock,
-                                          color: Colors.white,
-                                        ),
-                                        hintText: 'Contraseña',
-                                        hintStyle:
-                                            TextStyle(color: Colors.white),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Por favor, introduzca su contraseña.';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 35),
-                                  GestureDetector(
-                                    onTap: _signIn,
+                                children: <Widget>[
+                                  SizedBox(height: 60),
+                                  FadeInUp(
+                                    duration: Duration(milliseconds: 1400),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: Colors.black,
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color.fromRGBO(11, 81, 45, .3),
+                                            blurRadius: 20,
+                                            offset: Offset(0, 10),
+                                          ),
+                                        ],
                                       ),
-                                      child: const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Text(
-                                            'Ingresar',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.w500,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(color: Colors.grey.shade200),
+                                              ),
                                             ),
+                                            child: TextFormField(
+                                              controller: _emailController,
+                                              style: TextStyle(color: Colors.black),
+                                              decoration: InputDecoration(
+                                                hintText: "Email o numero de telefono",
+                                                hintStyle: TextStyle(color: Colors.grey),
+                                                border: InputBorder.none,
+                                              ),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return 'Por favor introduzca su correo electrónico.';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(color: Colors.grey.shade200),
+                                              ),
+                                            ),
+                                            child: TextFormField(
+                                              controller: _passwordController,
+                                              obscureText: true,
+                                              style: TextStyle(color: Colors.black),
+                                              decoration: InputDecoration(
+                                                hintText: "Contraseña",
+                                                hintStyle: TextStyle(color: Colors.grey),
+                                                border: InputBorder.none,
+                                              ),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return 'Por favor, introduzca su contraseña.';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 40),
+                                  FadeInUp(
+                                    duration: Duration(milliseconds: 1500),
+                                    child: Text(
+                                      "Olvide mi contraseña?",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  SizedBox(height: 40),
+                                  FadeInUp(
+                                    duration: Duration(milliseconds: 1600),
+                                    child: MaterialButton(
+                                      onPressed: _signIn,
+                                      height: 50,
+                                      color: Colors.teal[600],
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Ingresar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 35),
+                                  SizedBox(height: 50),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const SizedBox(height: 10),
                                       GestureDetector(
                                         onTap: () {
-                                          Navigator.pushNamed(
-                                              context, '/register');
+                                          Navigator.pushNamed(context, '/register');
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
+                                            borderRadius: BorderRadius.circular(30),
                                             color: Colors.white,
                                           ),
                                           child: Center(
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
+                                              padding: const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'Crea tu cuenta',
                                                 style: TextStyle(
@@ -236,13 +276,15 @@ class _LoginState extends State<Login> {
                                 ],
                               ),
                             ),
-                          ))),
-                ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ]),
       ),
-    ));
+    );
   }
 
   @override

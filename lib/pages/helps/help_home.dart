@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:fccapp/services/level_2/help_service.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
@@ -40,7 +41,6 @@ class _HelpHomeState extends State<HelpHome> {
     setState(() {
       _showLoading = true;
     });
-    // Assume HelpService.makeRequest is implemented as shown before
     bool success = await HelpService.makeRequest(
         _selectedHelp!, _messageController.text, UserService(), DBService());
     if (!mounted) return; // Check if the widget is still in the tree
@@ -48,7 +48,6 @@ class _HelpHomeState extends State<HelpHome> {
       _showLoading = false;
     });
     if (success) {
-      // Only proceed if the widget is still mounted
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -72,68 +71,164 @@ class _HelpHomeState extends State<HelpHome> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Help Home'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                int crossAxisCount = (constraints.maxWidth / 150).floor(); // Adjust 150 to change the button size
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    childAspectRatio: 3, // Adjust the aspect ratio as needed
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 4.0,
-                  ),
-                  itemCount: Help.values.length,
-                  itemBuilder: (context, index) {
-                    final help = Help.values[index];
-                    return HelpButton(
-                      help: help,
-                      isSelected: _selectedHelp == help,
-                      onPressed: () {
-                        setState(() {
-                          _selectedHelp = help;
-                          _showTextBox = true;
-                        });
-                      },
-                    );
-                  },
-                );
-              },
-            ),
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              Colors.teal.shade600,
+              Colors.green.shade300,
+              Colors.tealAccent.shade400,
+            ],
           ),
-          if (_showTextBox) ...[
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(height: 80),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _messageController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your message here',
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Text(
+                    "Solicitacion de ayudas",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 48),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 5, right: 5, bottom: bottomInset),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          FadeInUp(
+                            duration: const Duration(milliseconds: 1400),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _buildHelpButton(Help.zapato),
+                                    _buildHelpButton(Help.dermatologico),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _buildHelpButton(Help.oftamologico),
+                                    _buildHelpButton(Help.calamidad),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _buildHelpButton(Help.otro),
+                                    _buildHelpButton(Help.tutoria),
+                                  ],
+                                ),
+                                if (_showTextBox) ...[
+                                  const SizedBox(height: 20),
+                                  TextField(
+                                    controller: _messageController,
+                                    decoration: InputDecoration(
+                                      hintText: "Enter your message here",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  MaterialButton(
+                                    onPressed:
+                                        _messageController.text.isNotEmpty
+                                            ? _handleSend
+                                            : null,
+                                    height: 50,
+                                    color: Colors.teal[600],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        "Send",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                if (_showLoading) ...[
+                                  const CircularProgressIndicator(),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: _messageController.text.isNotEmpty ? _handleSend : null,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.green[800] ?? Colors.green, // Fallback color
-              ),
-              child: const Text('Send'),
-            ),
           ],
-          if (_showLoading) ...[
-            const CircularProgressIndicator(),
-          ],
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildHelpButton(Help help) {
+    return HelpButton(
+      help: help,
+      isSelected: _selectedHelp == help,
+      onPressed: () {
+        setState(() {
+          _selectedHelp = help;
+          _showTextBox = true;
+        });
+      },
     );
   }
 }
