@@ -212,6 +212,16 @@ class _HomeState extends State<Home> {
                   ),
                   child: const Text('Pedir certificado'),
                 ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/userHome');
+                    // Add your request certificate function here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],
+                  ),
+                  child: const Text('usuario'),
+                ),
               ],
             ),
             const Spacer(),
