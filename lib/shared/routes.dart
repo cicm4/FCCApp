@@ -1,6 +1,6 @@
-import 'package:fccapp/pages/calendars/calendar_home.dart';
 import 'package:fccapp/pages/files/files_home.dart';
 import 'package:fccapp/pages/helps/help_home.dart';
+import 'package:fccapp/pages/home/otherHome.dart';
 import 'package:fccapp/pages/scholarships/scholarship_home.dart';
 import 'package:fccapp/pages/users/user_home.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
@@ -26,9 +26,9 @@ Map<String, WidgetBuilder> getAppRoutes(
               userService: UserService(), dbService: dbs),
           st: st,
         ),
-    '/calendarHome': (context) => const CalendarHome(),
     '/helpHome': (context) => const HelpHome(),
     '/filesHome': (context) => FilesHome(dbs: dbs),
-    '/userHome': (context) => UserHome(dbu: DBUserService(userService: UserService(), dbService: dbs))
+    '/userHome': (context) => UserHome(dbu: DBUserService(userService: UserService(), dbService: dbs)),
+    '/test': (context) => const OtherHome()
   };
 }

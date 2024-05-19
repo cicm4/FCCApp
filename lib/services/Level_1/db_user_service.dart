@@ -1,5 +1,6 @@
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
+import 'package:flutter/foundation.dart';
 
 class DBUserService {
   final UserService userService;
@@ -24,25 +25,34 @@ class DBUserService {
     return user?['photoUrl'];
   }
 
-  updateUserProfile(Map<String, dynamic> data) async {
-    try {
-      //this expects all except UID, photo and type
-      //this will first fetch the data with the DB, change all sections, then update the DB
-      var user = await dbService.getFromDB(
-          path: 'users', data: '${userService.user?.uid}');
-      user?['displayName'] = data['displayName'];
-      user?['email'] = data['email'];
-      user?['gid'] = data['gid'];
-      user?['location'] = data['location'];
-      user?['phone'] = data['phone'];
-      user?['sport'] = data['sport'];
+  Future<bool> updateUserProfile(Map<String, dynamic> data) async {
+  try {
+    // Define a list of disallowed fields
+    List<String> disallowedFields = ['uid', 'photo', 'type'];
 
-      await dbService.addEntryToDBWithName(
-          path: 'users', entry: user!, name: '${userService.user?.uid}');
-
-      return true;
-    } catch (e) {
-      return false;
+    // Fetch user data from the database
+    var user = await dbService.getFromDB(path: 'users', data: '${userService.user?.uid}');
+    if (user == null) {
+      throw Exception('User not found');
     }
+
+    // Update only allowed fields
+    data.forEach((key, value) {
+      if (!disallowedFields.contains(key)) {
+        user[key] = value;
+      }
+    });
+
+    // Update the database with the modified user data
+    await dbService.addEntryToDBWithName(path: 'users', entry: user, name: '${userService.user?.uid}');
+
+    return true;
+  } catch (e) {
+    if (kDebugMode) {
+      print('An error occurred while updating user profile: $e');
+    }
+    return false;
   }
+}
+
 }

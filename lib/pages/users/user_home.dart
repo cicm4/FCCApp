@@ -16,6 +16,9 @@ class _UserHomeState extends State<UserHome> {
   Map<String, dynamic>? _editableUserData;
   bool _isEditing = false;
 
+  final List<String> _locations = ['Medellin', 'Llanogrande'];
+  final List<String> _sports = ['Tennis', 'Golf'];
+
   @override
   void initState() {
     super.initState();
@@ -63,11 +66,11 @@ class _UserHomeState extends State<UserHome> {
           ),
           const SizedBox(height: 20),
           _buildEditableTextField('Nombre: ', 'displayName', userData),
-          _buildEditableTextField('Correo electrónico: ', 'email', userData),
+          _buildTextField('Correo electrónico: ', 'email', userData),
           _buildEditableTextField('Cédula: ', 'gid', userData),
-          _buildEditableTextField('Ubicación: ', 'location', userData),
+          _buildEditableDropdownField('Ubicación: ', 'location', userData, _locations),
           _buildEditableTextField('Teléfono: ', 'phone', userData),
-          _buildEditableTextField('Deporte: ', 'sport', userData),
+          _buildEditableDropdownField('Deporte: ', 'sport', userData, _sports),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -106,6 +109,61 @@ class _UserHomeState extends State<UserHome> {
                 ? TextFormField(
                     initialValue: userData[key],
                     onChanged: (value) => userData[key] = value,
+                  )
+                : Text(
+                    userData[key] ?? '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, String key, Map<String, dynamic> userData) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16),
+          ),
+          Expanded(
+            child: Text(
+              userData[key] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditableDropdownField(String label, String key, Map<String, dynamic> userData, List<String> options) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16),
+          ),
+          Expanded(
+            child: _isEditing
+                ? DropdownButtonFormField<String>(
+                    value: options.contains(userData[key]) ? userData[key] : null,
+                    items: options.map((option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        userData[key] = value;
+                      });
+                    },
                   )
                 : Text(
                     userData[key] ?? '',
