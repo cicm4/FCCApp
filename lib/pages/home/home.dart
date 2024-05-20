@@ -53,9 +53,9 @@ class _HomeState extends State<Home> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color.fromRGBO(0, 137, 123, 1),
-              Color.fromRGBO(129, 199, 132, 1),
-              Color.fromRGBO(29, 233, 182, 1),
+              Color(0xFF0b512d),
+                Color(0xFFe6e6e3),
+                Color(0xFF22c0c6),
             ],
           ),
         ),

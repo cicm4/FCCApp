@@ -27,11 +27,11 @@ class HelpPapersSection extends StatelessWidget {
                 await Navigator.pushNamed(context, '/helpHome');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal[600],
+                backgroundColor: const Color(0xFF0b512d),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                fixedSize: Size(screenWidth * 0.4, 50), // 40% of screen width and fixed height of 50
+                fixedSize: Size(screenWidth * 0.42, 50), // 42% of screen width and fixed height of 50
               ),
               child: const Text(
                 "Mis Ayudas",
@@ -47,11 +47,11 @@ class HelpPapersSection extends StatelessWidget {
                 await Navigator.pushNamed(context, '/filesHome');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal[600],
+                backgroundColor: const Color(0xFF0b512d),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                fixedSize: Size(screenWidth * 0.4, 50), // 40% of screen width and fixed height of 50
+                fixedSize: Size(screenWidth * 0.42, 50), // 42% of screen width and fixed height of 50
               ),
               child: const Text(
                 "Pedir Certificado",

@@ -29,7 +29,24 @@ class _UserHomeState extends State<UserHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil de Usuario'),
+        backgroundColor: const Color(0xFF0b512d),
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        title: const Text(
+          'Perfil de Usuario',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: FutureBuilder<Map<String, dynamic>?>(
         future: _userDataFuture,
@@ -50,135 +67,247 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  Widget _buildUserProfile(Map<String, dynamic> userData) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage: (userData['photoUrl'] != null && userData['photoUrl'].isNotEmpty)
-                  ? NetworkImage(userData['photoUrl']) as ImageProvider
-                  : const AssetImage('assets/default_avatar.png'),
-            ),
-          ),
-          const SizedBox(height: 20),
-          _buildEditableTextField('Nombre: ', 'displayName', userData),
-          _buildTextField('Correo electrónico: ', 'email', userData),
-          _buildEditableTextField('Cédula: ', 'gid', userData),
-          _buildEditableDropdownField('Ubicación: ', 'location', userData, _locations),
-          _buildEditableTextField('Teléfono: ', 'phone', userData),
-          _buildEditableDropdownField('Deporte: ', 'sport', userData, _sports),
-          const SizedBox(height: 20),
-          Row(
+    Widget _buildUserProfile(Map<String, dynamic> userData) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF0b512d),
+            Color(0xFF22c0c6),
+          ],
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ElevatedButton(
-                onPressed: _toggleEditSave,
-                child: Text(_isEditing ? 'Guardar' : 'Editar'),
-              ),
-              if (_isEditing)
-                const SizedBox(width: 10),
-              if (_isEditing)
-                ElevatedButton(
-                  onPressed: _cancelEdit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  child: const Text('Cancelar'),
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: (userData['photoUrl'] != null && userData['photoUrl'].isNotEmpty)
+                      ? NetworkImage(userData['photoUrl']) as ImageProvider
+                      : const AssetImage('assets/defaultimage.jpg'),
                 ),
+              ),
+              const SizedBox(height: 20),
+              _buildEditableProfileRow('assets/nameicon.png', 'Nombre: ', 'displayName', userData),
+              const SizedBox(height: 20),
+              _buildProfileRow('assets/emailicon.png', 'Correo electrónico: ', 'email', userData),
+              const SizedBox(height: 20),
+              _buildEditableProfileRow('assets/idicon.png', 'Cédula: ', 'gid', userData),
+              const SizedBox(height: 20),
+              _buildEditableDropdownProfileRow('assets/locationicon.png', 'Ubicación: ', 'location', userData, _locations),
+              const SizedBox(height: 20),
+              _buildEditableProfileRow('assets/phoneicon.png', 'Teléfono: ', 'phone', userData),
+              const SizedBox(height: 20),
+              _buildEditableDropdownProfileRow('assets/sporticon.png', 'Deporte: ', 'sport', userData, _sports),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _toggleEditSave,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: const BorderSide(color: Color(0xFF0b512d), width: 2),
+                    ),
+                    child: Text(
+                      _isEditing ? 'Guardar' : 'Editar',
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF0b512d),
+                      ),
+                    ),
+                  ),
+                  if (_isEditing) const SizedBox(width: 10),
+                  if (_isEditing)
+                    ElevatedButton(
+                      onPressed: _cancelEdit,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildEditableTextField(String label, String key, Map<String, dynamic> userData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16),
-          ),
-          Expanded(
-            child: _isEditing
-                ? TextFormField(
-                    initialValue: userData[key],
-                    onChanged: (value) => userData[key] = value,
-                  )
-                : Text(
-                    userData[key] ?? '',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildTextField(String label, String key, Map<String, dynamic> userData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16),
-          ),
-          Expanded(
-            child: Text(
-              userData[key] ?? '',
-              style: const TextStyle(fontSize: 16),
+  Widget _buildEditableProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Image.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+              color: Colors.white,
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        _isEditing
+            ? TextFormField(
+                initialValue: userData[key],
+                onChanged: (value) => userData[key] = value,
+                style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                userData[key] ?? '',
+                style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+      ],
     );
   }
 
-  Widget _buildEditableDropdownField(String label, String key, Map<String, dynamic> userData, List<String> options) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16),
+  Widget _buildProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Image.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          userData[key] ?? '',
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.white,
           ),
-          Expanded(
-            child: _isEditing
-                ? DropdownButtonFormField<String>(
-                    value: options.contains(userData[key]) ? userData[key] : null,
-                    items: options.map((option) {
-                      return DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        userData[key] = value;
-                      });
-                    },
-                  )
-                : Text(
-                    userData[key] ?? '',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-          ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditableDropdownProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData, List<String> options) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Image.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        _isEditing
+            ? DropdownButtonFormField<String>(
+                value: options.contains(userData[key]) ? userData[key] : null,
+                items: options.map((option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    userData[key] = value;
+                  });
+                },
+                style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                userData[key] ?? '',
+                style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+      ],
     );
   }
 
   void _toggleEditSave() {
     setState(() {
       if (_isEditing) {
-        // Save logic here (e.g., update the database)
         _originalUserData = Map.from(_editableUserData!);
         widget.dbu.updateUserProfile(_editableUserData!);
       }

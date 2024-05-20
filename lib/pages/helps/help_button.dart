@@ -29,8 +29,8 @@ class HelpButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: isSelected
-                ? Colors.green[800] ?? Colors.green // Dark green when selected
-                : Colors.teal[600], // Teal when not selected
+                ? const Color(0xFF22c0c6) // Cyan when selected
+                : const Color(0xFF0b512d), // Dark Green when not selected
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

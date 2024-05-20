@@ -76,13 +76,13 @@ class _HelpHomeState extends State<HelpHome> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              Colors.teal.shade600,
-              Colors.green.shade300,
-              Colors.tealAccent.shade400,
+              Color(0xFF0b512d),
+                Color(0xFFe6e6e3),
+                Color(0xFF22c0c6),
             ],
           ),
         ),

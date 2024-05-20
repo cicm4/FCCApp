@@ -44,7 +44,7 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.teal[600],
+            backgroundColor: const Color(0xFF0b512d),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

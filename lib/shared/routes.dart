@@ -28,5 +28,8 @@ Map<String, WidgetBuilder> getAppRoutes(
     '/helpHome': (context) => const HelpHome(),
     '/filesHome': (context) => FilesHome(dbs: dbs),
     '/userHome': (context) => UserHome(dbu: DBUserService(userService: UserService(), dbService: dbs)),
+
+    //test
+    '/test': (context) => FilesHome(dbs: dbs),
   };
 }
