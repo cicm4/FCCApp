@@ -57,19 +57,19 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () {
                             Navigator.pop(context);
                           },
                         ),
-                        Text(
+                        const Text(
                           "Scholarship Home",
                           style: TextStyle(
                             fontFamily: 'Montserrat',
@@ -78,11 +78,11 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(width: 48),
+                        const SizedBox(width: 48),
                       ],
                     ),
                   ),
-                  SizedBox(height: 0),
+                  const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(4, (index) {
@@ -98,17 +98,17 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                       );
                     }),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Expanded(
                     child: SingleChildScrollView(
                       
                       reverse: false,
                       child: Padding(
-                        padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
                         child: AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.easeOut,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(30),
@@ -116,14 +116,14 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(20),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 FadeInUp(
-                                  duration: Duration(milliseconds: 1400),
+                                  duration: const Duration(milliseconds: 1400),
                                   child: Column(
                                     children: [
                                       _buildUploadRow(
@@ -142,7 +142,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                                           dataFromDatabase),
                                       _buildBankAccountItem(
                                           scholarshipService),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       _buildSelectFileButton(
                                           scholarshipService),
                                       _buildUploadButton(
@@ -227,7 +227,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                       scholarshipService: scholarshipService,
                       storageService: widget.st,
                     )
-                  : Center(
+                  : const Center(
                       child: Text(
                         'Select a file to preview',
                         style: TextStyle(color: Colors.black),
@@ -297,12 +297,12 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
         });
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: BoxDecoration(
           color: selectedFileType == urlFileType ? Colors.green.shade200 : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(11, 81, 45, .3),
               blurRadius: 20,
@@ -341,12 +341,12 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
             });
           },
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             decoration: BoxDecoration(
               color: selectedFileType == UrlFileType.bankaccount ? Colors.green.shade200 : Colors.white,
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Color.fromRGBO(11, 81, 45, .3),
                   blurRadius: 20,

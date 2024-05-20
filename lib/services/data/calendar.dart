@@ -1,4 +1,5 @@
 import 'package:fccapp/services/data/personalEvent.dart';
+import 'package:flutter/foundation.dart';
 
 class Calendar {
   Map<String, dynamic> attendance;
@@ -33,8 +34,12 @@ class Calendar {
   factory Calendar.fromMap(Map<String, dynamic> data) {
     //loop to print every element in attendance
     for (String key in data['attendance'].keys) {
-      print(key);
-      print(data['attendance'][key]);
+      if (kDebugMode) {
+        print(key);
+      }
+      if (kDebugMode) {
+        print(data['attendance'][key]);
+      }
     }
     return Calendar(
       attendance: data['attendance'],

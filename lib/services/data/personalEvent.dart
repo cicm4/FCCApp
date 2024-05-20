@@ -1,3 +1,4 @@
+// ignore: file_names
 class PersonalEvent {
   String startTime;
   String endTime;
