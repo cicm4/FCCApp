@@ -5,13 +5,15 @@ class HelpPapersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         const Text(
           "Ayudas y Papeles",
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black, // Text color set to black
           ),
@@ -25,10 +27,11 @@ class HelpPapersSection extends StatelessWidget {
                 await Navigator.pushNamed(context, '/helpHome');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0b512d),
+                backgroundColor: Colors.teal[600],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                fixedSize: Size(screenWidth * 0.4, 50), // 40% of screen width and fixed height of 50
               ),
               child: const Text(
                 "Mis Ayudas",
@@ -44,10 +47,11 @@ class HelpPapersSection extends StatelessWidget {
                 await Navigator.pushNamed(context, '/filesHome');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0b512d),
+                backgroundColor: Colors.teal[600],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                fixedSize: Size(screenWidth * 0.4, 50), // 40% of screen width and fixed height of 50
               ),
               child: const Text(
                 "Pedir Certificado",

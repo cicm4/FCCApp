@@ -22,6 +22,8 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         const Text(
@@ -42,10 +44,11 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
             });
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0b512d),
+            backgroundColor: Colors.teal[600],
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            fixedSize: Size(screenWidth * 0.4, 50),
           ),
           child: const Text(
             "Subir Archivos",

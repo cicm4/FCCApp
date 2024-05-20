@@ -5,12 +5,14 @@ class HelpButton extends StatelessWidget {
   final Help help;
   final VoidCallback onPressed;
   final bool isSelected;
+  final double screenWidth;
 
   const HelpButton({
     super.key,
     required this.help,
     required this.onPressed,
     required this.isSelected,
+    required this.screenWidth,
   });
 
   @override
@@ -32,6 +34,7 @@ class HelpButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            fixedSize: Size(screenWidth * 0.4, 50),
           ),
           child: Text(
             help.displayName,

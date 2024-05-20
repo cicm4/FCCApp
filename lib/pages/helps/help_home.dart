@@ -151,6 +151,7 @@ class _HelpHomeState extends State<HelpHome> {
                                     _buildHelpButton(Help.dermatologico),
                                   ],
                                 ),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -159,12 +160,13 @@ class _HelpHomeState extends State<HelpHome> {
                                     _buildHelpButton(Help.calamidad),
                                   ],
                                 ),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    _buildHelpButton(Help.otro),
                                     _buildHelpButton(Help.tutoria),
+                                    _buildHelpButton(Help.otro),
                                   ],
                                 ),
                                 if (_showTextBox) ...[
@@ -221,9 +223,11 @@ class _HelpHomeState extends State<HelpHome> {
       ),
     );
   }
+  
 
   Widget _buildHelpButton(Help help) {
     return HelpButton(
+      screenWidth: MediaQuery.of(context).size.width,
       help: help,
       isSelected: _selectedHelp == help,
       onPressed: () {

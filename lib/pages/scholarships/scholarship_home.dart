@@ -183,7 +183,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           selectedFile = await scholarshipService.pickURLFileType();
           setState(() {});
         },
-        child: const Text('Select File', style: TextStyle(color: Colors.white)),
+        child: const Text('Seleccionar Archivo', style: TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -230,7 +230,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                     )
                   : const Center(
                       child: Text(
-                        'Select a file to preview',
+                        'Seleccione un archivo para previsualizarlo',
                         style: TextStyle(color: Colors.black),
                       ),
                     ),
