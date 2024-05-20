@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
                         child: CircleAvatar(
                           radius: 25,
                           backgroundColor: index < scholarshipStatus
-                              ? Colors.green.shade700
+                              ? const Color(0xFF0b512d)
                               : Colors.grey.shade800,
                         ),
                       );

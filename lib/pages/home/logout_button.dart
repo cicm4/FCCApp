@@ -9,7 +9,6 @@ class LogoutButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         AuthService.signOut();
-        Navigator.pushReplacementNamed(context, '/login');
       },
       child: const Center(
         child: Text(

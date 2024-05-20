@@ -1,5 +1,11 @@
+import 'package:fccapp/pages/users/editable_dropdown_profile_row.dart';
+import 'package:fccapp/pages/users/editable_profile_row.dart';
+import 'package:fccapp/pages/users/profile_row.dart';
 import 'package:fccapp/services/Level_1/db_user_service.dart';
+import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
 class UserHome extends StatefulWidget {
   final DBUserService dbu;
@@ -23,6 +29,12 @@ class _UserHomeState extends State<UserHome> {
   void initState() {
     super.initState();
     _userDataFuture = widget.dbu.getUserData();
+  }
+
+  @override
+  void dispose() {
+    // Perform any necessary cleanup here
+    super.dispose();
   }
 
   @override
@@ -67,7 +79,53 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-    Widget _buildUserProfile(Map<String, dynamic> userData) {
+  Future<void> _changeProfilePicture(BuildContext context) async {
+    final result = await widget.dbu.pickProfilePicture();
+    if (result != null) {
+      File file = result[0];
+      String fileName = result[1];
+
+      bool? confirm = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirmar Cambio'),
+            content: const Text('¿Deseas cambiar tu foto de perfil?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (confirm == true) {
+        await widget.dbu.addProfilePicture(
+          st: StorageService(),
+          file: file,
+        );
+
+        // Reload the user data to reflect the changes
+        if (mounted) {
+          setState(() {
+            _userDataFuture = widget.dbu.getUserData();
+          });
+        }
+      }
+    }
+  }
+
+  Widget _buildUserProfile(Map<String, dynamic> userData) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -88,25 +146,76 @@ class _UserHomeState extends State<UserHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: (userData['photoUrl'] != null && userData['photoUrl'].isNotEmpty)
-                      ? NetworkImage(userData['photoUrl']) as ImageProvider
-                      : const AssetImage('assets/defaultimage.jpg'),
+                child: GestureDetector(
+                  onTap: () => _changeProfilePicture(context),
+                  child: FutureBuilder<Uint8List?>(
+                    future: widget.dbu.getProfilePicture(st: StorageService()),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                        return CircleAvatar(
+                          radius: 50,
+                          backgroundImage: const AssetImage('assets/defaultimage.jpg'),
+                        );
+                      } else {
+                        return CircleAvatar(
+                          radius: 50,
+                          backgroundImage: MemoryImage(snapshot.data!),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
-              _buildEditableProfileRow('assets/nameicon.png', 'Nombre: ', 'displayName', userData),
+              EditableProfileRow(
+                iconPath: 'assets/nameicon.png',
+                label: 'Nombre: ',
+                value: userData['displayName'] ?? '',
+                isEditing: _isEditing,
+                onChanged: (value) => userData['displayName'] = value,
+              ),
               const SizedBox(height: 20),
-              _buildProfileRow('assets/emailicon.png', 'Correo electrónico: ', 'email', userData),
+              ProfileRow(
+                iconPath: 'assets/emailicon.png',
+                label: 'Correo electrónico: ',
+                value: userData['email'] ?? '',
+              ),
               const SizedBox(height: 20),
-              _buildEditableProfileRow('assets/idicon.png', 'Cédula: ', 'gid', userData),
+              EditableProfileRow(
+                iconPath: 'assets/idicon.png',
+                label: 'Cédula: ',
+                value: userData['gid'] ?? '',
+                isEditing: _isEditing,
+                onChanged: (value) => userData['gid'] = value,
+              ),
               const SizedBox(height: 20),
-              _buildEditableDropdownProfileRow('assets/locationicon.png', 'Ubicación: ', 'location', userData, _locations),
+              EditableDropdownProfileRow(
+                iconPath: 'assets/locationicon.png',
+                label: 'Ubicación: ',
+                value: userData['location'] ?? '',
+                options: _locations,
+                isEditing: _isEditing,
+                onChanged: (value) => userData['location'] = value,
+              ),
               const SizedBox(height: 20),
-              _buildEditableProfileRow('assets/phoneicon.png', 'Teléfono: ', 'phone', userData),
+              EditableProfileRow(
+                iconPath: 'assets/phoneicon.png',
+                label: 'Teléfono: ',
+                value: userData['phone'] ?? '',
+                isEditing: _isEditing,
+                onChanged: (value) => userData['phone'] = value,
+              ),
               const SizedBox(height: 20),
-              _buildEditableDropdownProfileRow('assets/sporticon.png', 'Deporte: ', 'sport', userData, _sports),
+              EditableDropdownProfileRow(
+                iconPath: 'assets/sporticon.png',
+                label: 'Deporte: ',
+                value: userData['sport'] ?? '',
+                options: _sports,
+                isEditing: _isEditing,
+                onChanged: (value) => userData['sport'] = value,
+              ),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -134,7 +243,7 @@ class _UserHomeState extends State<UserHome> {
                     ElevatedButton(
                       onPressed: _cancelEdit,
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+                        backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -158,167 +267,24 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-
-  Widget _buildEditableProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Image.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        _isEditing
-            ? TextFormField(
-                initialValue: userData[key],
-                onChanged: (value) => userData[key] = value,
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              )
-            : Text(
-                userData[key] ?? '',
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-      ],
-    );
-  }
-
-  Widget _buildProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Image.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          userData[key] ?? '',
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEditableDropdownProfileRow(String iconPath, String label, String key, Map<String, dynamic> userData, List<String> options) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Image.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        _isEditing
-            ? DropdownButtonFormField<String>(
-                value: options.contains(userData[key]) ? userData[key] : null,
-                items: options.map((option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    userData[key] = value;
-                  });
-                },
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              )
-            : Text(
-                userData[key] ?? '',
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-      ],
-    );
-  }
-
   void _toggleEditSave() {
-    setState(() {
-      if (_isEditing) {
-        _originalUserData = Map.from(_editableUserData!);
-        widget.dbu.updateUserProfile(_editableUserData!);
-      }
-      _isEditing = !_isEditing;
-    });
+    if (mounted) {
+      setState(() {
+        if (_isEditing) {
+          _originalUserData = Map.from(_editableUserData!);
+          widget.dbu.updateUserProfile(_editableUserData!);
+        }
+        _isEditing = !_isEditing;
+      });
+    }
   }
 
   void _cancelEdit() {
-    setState(() {
-      _editableUserData = Map.from(_originalUserData!);
-      _isEditing = false;
-    });
+    if (mounted) {
+      setState(() {
+        _editableUserData = Map.from(_originalUserData!);
+        _isEditing = false;
+      });
+    }
   }
 }

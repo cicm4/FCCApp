@@ -39,18 +39,19 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           ScholarshipService scholarshipService = snapshot.data!;
           dataFromDatabase = scholarshipService.getScholarshipData();
           bankAccountText = scholarshipService.getBankaccount();
-          isBankAccountFile = scholarshipService.getSmartBankDetailAURLFile(isBankAccountFile);
+          isBankAccountFile =
+              scholarshipService.getSmartBankDetailAURLFile(isBankAccountFile);
 
           return Scaffold(
             body: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   colors: [
-                    Colors.teal.shade600,
-                    Colors.green.shade300,
-                    Colors.tealAccent.shade400,
+                    Color(0xFF0b512d),
+                    Color(0xFFe6e6e3),
+                    Color(0xFF22c0c6),
                   ],
                 ),
               ),
@@ -64,7 +65,8 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -92,8 +94,8 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                           radius: 20,
                           backgroundColor: dataFromDatabase != null &&
                                   scholarshipService.getStatusNum() > index
-                              ? Colors.green
-                              : Colors.grey,
+                              ? const Color(0xFF0b512d)
+                              : Colors.grey.shade800,
                         ),
                       );
                     }),
@@ -101,10 +103,10 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                   const SizedBox(height: 5),
                   Expanded(
                     child: SingleChildScrollView(
-                      
                       reverse: false,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                        padding: const EdgeInsets.only(
+                            left: 5, right: 5, bottom: 10),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeOut,
@@ -132,23 +134,24 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                                           scholarshipService,
                                           UrlFileType.matriculaURL,
                                           dataFromDatabase),
-                                      _buildUploadRow("Horario", "horarioURL",
-                                          scholarshipService, UrlFileType.horarioURL, dataFromDatabase),
+                                      _buildUploadRow(
+                                          "Horario",
+                                          "horarioURL",
+                                          scholarshipService,
+                                          UrlFileType.horarioURL,
+                                          dataFromDatabase),
                                       _buildUploadRow(
                                           "Soporte de Pago",
                                           "soporteURL",
                                           scholarshipService,
                                           UrlFileType.soporteURL,
                                           dataFromDatabase),
-                                      _buildBankAccountItem(
-                                          scholarshipService),
+                                      _buildBankAccountItem(scholarshipService),
                                       const SizedBox(height: 20),
                                       _buildSelectFileButton(
                                           scholarshipService),
-                                      _buildUploadButton(
-                                          scholarshipService),
-                                      _buildFilePreview(
-                                          scholarshipService),
+                                      _buildUploadButton(scholarshipService),
+                                      _buildFilePreview(scholarshipService),
                                     ],
                                   ),
                                 ),
@@ -174,7 +177,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           (isBankAccountFile || selectedFileType != UrlFileType.bankaccount),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.teal[600],
+          backgroundColor: const Color(0xFF0b512d),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
@@ -183,7 +186,8 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           selectedFile = await scholarshipService.pickURLFileType();
           setState(() {});
         },
-        child: const Text('Seleccionar Archivo', style: TextStyle(color: Colors.white)),
+        child: const Text('Seleccionar Archivo',
+            style: TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -301,7 +305,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
         margin: const EdgeInsets.symmetric(vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: BoxDecoration(
-          color: selectedFileType == urlFileType ? Colors.green.shade200 : Colors.white,
+          color: selectedFileType == urlFileType
+              ? Colors.green.shade200
+              : Colors.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
@@ -317,7 +323,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
             Text(
               title,
               style: TextStyle(
-                color: selectedFileType == urlFileType ? Colors.white : Colors.black,
+                color: selectedFileType == urlFileType
+                    ? Colors.white
+                    : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -345,7 +353,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
             margin: const EdgeInsets.symmetric(vertical: 5),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             decoration: BoxDecoration(
-              color: selectedFileType == UrlFileType.bankaccount ? Colors.green.shade200 : Colors.white,
+              color: selectedFileType == UrlFileType.bankaccount
+                  ? Colors.green.shade200
+                  : Colors.white,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(
@@ -361,15 +371,19 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                 Text(
                   'Numero de Banco',
                   style: TextStyle(
-                    color: selectedFileType == UrlFileType.bankaccount ? Colors.white : Colors.black,
+                    color: selectedFileType == UrlFileType.bankaccount
+                        ? Colors.white
+                        : Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Icon(
-                  (dataFromDatabase['bankaccountURL'] != null || dataFromDatabase['bankaccount'] != null)
+                  (dataFromDatabase['bankaccountURL'] != null ||
+                          dataFromDatabase['bankaccount'] != null)
                       ? Icons.check
                       : Icons.close,
-                  color: (dataFromDatabase['bankaccountURL'] != null || dataFromDatabase['bankaccount'] != null)
+                  color: (dataFromDatabase['bankaccountURL'] != null ||
+                          dataFromDatabase['bankaccount'] != null)
                       ? Colors.green
                       : Colors.red,
                 ),
@@ -380,7 +394,8 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
         Visibility(
           visible: selectedFileType == UrlFileType.bankaccount,
           child: SwitchListTile(
-            title: const Text('Subir archivo', style: TextStyle(color: Color.fromRGBO(66, 66, 66, 1))),
+            title: const Text('Subir archivo',
+                style: TextStyle(color: Color.fromRGBO(66, 66, 66, 1))),
             value: isBankAccountFile,
             onChanged: (bool value) {
               setState(() {
@@ -390,7 +405,8 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           ),
         ),
         Visibility(
-          visible: selectedFileType == UrlFileType.bankaccount && !isBankAccountFile,
+          visible:
+              selectedFileType == UrlFileType.bankaccount && !isBankAccountFile,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
