@@ -171,6 +171,9 @@ class _HelpHomeState extends State<HelpHome> {
                                   const SizedBox(height: 20),
                                   TextField(
                                     controller: _messageController,
+                                    style: const TextStyle(
+                                      color: Colors.black
+                                    ),
                                     decoration: InputDecoration(
                                       hintText: "Enter your message here",
                                       border: OutlineInputBorder(

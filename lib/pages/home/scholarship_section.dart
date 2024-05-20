@@ -24,7 +24,7 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
+        const Text(
           "Mi Beca",
           style: TextStyle(
             fontFamily: 'Montserrat',
@@ -33,7 +33,7 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         ElevatedButton(
           onPressed: () async {
             await Navigator.pushNamed(context, '/scholarshipsHome');
@@ -41,7 +41,13 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
               scholarshipStatus = widget.scholarshipService.getStatusNum();
             });
           },
-          child: Text(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF0b512d),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: const Text(
             "Subir Archivos",
             style: TextStyle(
               fontFamily: 'Montserrat',
@@ -49,14 +55,8 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
               color: Colors.white,
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            primary: Color(0xFF0b512d),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
         ),
-        SizedBox(height: 30), // Increased space to lower the section
+        const SizedBox(height: 30), // Increased space to lower the section
       ],
     );
   }

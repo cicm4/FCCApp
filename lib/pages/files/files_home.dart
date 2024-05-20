@@ -20,7 +20,6 @@ class FilesHome extends StatefulWidget {
 
 class _FilesHomeState extends State<FilesHome> {
   String? _pdfFilePath;
-  String? _userName;
   bool _isLoading = true;
 
   @override
@@ -32,7 +31,6 @@ class _FilesHomeState extends State<FilesHome> {
   Future<void> _init() async {
     String? userName = await widget.dus.getUserName();
     setState(() {
-      _userName = userName;
       _isLoading = false;
     });
     _createPdf(userName!);

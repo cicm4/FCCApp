@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
     final fontSizeAdaptive = MediaQuery.of(context).size.width * 0.07;
 
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 20),
-            ProfileButton(),
+            const ProfileButton(),
             const SizedBox(height: 20),
             Center(
               child: Column(
@@ -121,10 +121,10 @@ class _HomeState extends State<Home> {
                         children: <Widget>[
                           const SizedBox(height: 30), // Increased space to lower the section
                           ScholarshipSection(dbs: widget.dbs, scholarshipService: scholarshipService),
-                          HelpPapersSection(),
+                          const HelpPapersSection(),
                           TestSection(),
                           const Spacer(),
-                          LogoutButton(),
+                          const LogoutButton(),
                           const SizedBox(height: 20),
                         ],
                       ),

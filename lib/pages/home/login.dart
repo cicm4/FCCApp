@@ -82,9 +82,9 @@ class _LoginState extends State<Login> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 80),
+                    const SizedBox(height: 80),
                     Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -93,8 +93,8 @@ class _LoginState extends State<Login> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 FadeInUp(
-                                  duration: Duration(milliseconds: 1000),
-                                  child: Text(
+                                  duration: const Duration(milliseconds: 1000),
+                                  child: const Text(
                                     "Conectate",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -104,10 +104,10 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 FadeInUp(
-                                  duration: Duration(milliseconds: 1300),
-                                  child: Text(
+                                  duration: const Duration(milliseconds: 1300),
+                                  child: const Text(
                                     "Bienvenido",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -120,8 +120,8 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(right: 30), // Adjust the right padding as needed
-                            child: Container(
+                            padding: const EdgeInsets.only(right: 30), // Adjust the right padding as needed
+                            child: SizedBox(
                               width: 115, // Adjust the size as needed
                               child: Image.asset('assets/LOGOFCC.png'),
                             ),
@@ -129,10 +129,10 @@ class _LoginState extends State<Login> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(60),
@@ -140,20 +140,20 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(30),
+                          padding: const EdgeInsets.all(30),
                           child: SingleChildScrollView(
                             child: Form(
                               key: _formKey,
                               child: Column(
                                 children: <Widget>[
-                                  SizedBox(height: 60),
+                                  const SizedBox(height: 60),
                                   FadeInUp(
-                                    duration: Duration(milliseconds: 1400),
+                                    duration: const Duration(milliseconds: 1400),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
+                                        boxShadow: const [
                                           BoxShadow(
                                             color: Color.fromRGBO(11, 81, 45, .3),
                                             blurRadius: 20,
@@ -164,7 +164,7 @@ class _LoginState extends State<Login> {
                                       child: Column(
                                         children: <Widget>[
                                           Container(
-                                            padding: EdgeInsets.all(10),
+                                            padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 bottom: BorderSide(color: Colors.grey.shade200),
@@ -172,8 +172,8 @@ class _LoginState extends State<Login> {
                                             ),
                                             child: TextFormField(
                                               controller: _emailController,
-                                              style: TextStyle(color: Colors.black),
-                                              decoration: InputDecoration(
+                                              style: const TextStyle(color: Colors.black),
+                                              decoration: const InputDecoration(
                                                 hintText: "Email o numero de telefono",
                                                 hintStyle: TextStyle(color: Colors.grey),
                                                 border: InputBorder.none,
@@ -187,7 +187,7 @@ class _LoginState extends State<Login> {
                                             ),
                                           ),
                                           Container(
-                                            padding: EdgeInsets.all(10),
+                                            padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 bottom: BorderSide(color: Colors.grey.shade200),
@@ -196,8 +196,8 @@ class _LoginState extends State<Login> {
                                             child: TextFormField(
                                               controller: _passwordController,
                                               obscureText: true,
-                                              style: TextStyle(color: Colors.black),
-                                              decoration: InputDecoration(
+                                              style: const TextStyle(color: Colors.black),
+                                              decoration: const InputDecoration(
                                                 hintText: "Contraseña",
                                                 hintStyle: TextStyle(color: Colors.grey),
                                                 border: InputBorder.none,
@@ -214,17 +214,17 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 40),
+                                  const SizedBox(height: 40),
                                   FadeInUp(
-                                    duration: Duration(milliseconds: 1500),
-                                    child: Text(
+                                    duration: const Duration(milliseconds: 1500),
+                                    child: const Text(
                                       "Olvide mi contraseña?",
                                       style: TextStyle(color: Colors.grey),
                                     ),
                                   ),
-                                  SizedBox(height: 40),
+                                  const SizedBox(height: 40),
                                   FadeInUp(
-                                    duration: Duration(milliseconds: 1600),
+                                    duration: const Duration(milliseconds: 1600),
                                     child: MaterialButton(
                                       onPressed: _signIn,
                                       height: 50,
@@ -232,7 +232,7 @@ class _LoginState extends State<Login> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
-                                      child: Center(
+                                      child: const Center(
                                         child: Text(
                                           "Ingresar",
                                           style: TextStyle(
@@ -243,7 +243,7 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 50),
+                                  const SizedBox(height: 50),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [

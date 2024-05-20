@@ -1,7 +1,8 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
 import 'package:fccapp/pages/scholarships/file_preview_home.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
-import 'package:flutter/material.dart';
 
 class ScholarshipHome extends StatefulWidget {
   final Future<ScholarshipService> scholarshipService;
@@ -38,36 +39,126 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           ScholarshipService scholarshipService = snapshot.data!;
           dataFromDatabase = scholarshipService.getScholarshipData();
           bankAccountText = scholarshipService.getBankaccount();
-          isBankAccountFile =
-              scholarshipService.getSmartBankDetailAURLFile(isBankAccountFile);
+          isBankAccountFile = scholarshipService.getSmartBankDetailAURLFile(isBankAccountFile);
 
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Scholarship Home'),
-              backgroundColor: Colors.black,
-            ),
-            body: Material(
-              color: Colors.black,
-              child: ListView(
+            body: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  colors: [
+                    Colors.teal.shade600,
+                    Colors.green.shade300,
+                    Colors.tealAccent.shade400,
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  _buildListItem(
-                      'Liquidacion de Matricula',
-                      'matriculaURL',
-                      scholarshipService,
-                      UrlFileType.matriculaURL,
-                      dataFromDatabase),
-                  _buildListItem('Horario', 'horarioURL', scholarshipService,
-                      UrlFileType.horarioURL, dataFromDatabase),
-                  _buildListItem(
-                      'Soporte de Pago',
-                      'soporteURL',
-                      scholarshipService,
-                      UrlFileType.soporteURL,
-                      dataFromDatabase),
-                  _buildBankAccountItem(scholarshipService),
-                  _buildSelectFileButton(scholarshipService),
-                  _buildUploadButton(scholarshipService),
-                  _buildFilePreview(scholarshipService),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Text(
+                          "Scholarship Home",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 48),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(4, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: dataFromDatabase != null &&
+                                  scholarshipService.getStatusNum() > index
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 5),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      
+                      reverse: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                FadeInUp(
+                                  duration: Duration(milliseconds: 1400),
+                                  child: Column(
+                                    children: [
+                                      _buildUploadRow(
+                                          "Liquidacion de Matricula",
+                                          "matriculaURL",
+                                          scholarshipService,
+                                          UrlFileType.matriculaURL,
+                                          dataFromDatabase),
+                                      _buildUploadRow("Horario", "horarioURL",
+                                          scholarshipService, UrlFileType.horarioURL, dataFromDatabase),
+                                      _buildUploadRow(
+                                          "Soporte de Pago",
+                                          "soporteURL",
+                                          scholarshipService,
+                                          UrlFileType.soporteURL,
+                                          dataFromDatabase),
+                                      _buildBankAccountItem(
+                                          scholarshipService),
+                                      SizedBox(height: 20),
+                                      _buildSelectFileButton(
+                                          scholarshipService),
+                                      _buildUploadButton(
+                                          scholarshipService),
+                                      _buildFilePreview(
+                                          scholarshipService),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -82,7 +173,12 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
       visible: selectedFileType != null &&
           (isBankAccountFile || selectedFileType != UrlFileType.bankaccount),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.teal[600],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
         onPressed: () async {
           selectedFile = await scholarshipService.pickURLFileType();
           setState(() {});
@@ -99,7 +195,12 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               (selectedFileType == UrlFileType.bankaccount &&
                   !isBankAccountFile)),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green[800]),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.teal[600],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
         onPressed: () => uploadFile(
             scholarshipService, selectedFileType.toString().split('.')[1]),
         child: isUploading
@@ -109,20 +210,9 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     );
   }
 
-  String? getFileTypeData() {
-    var splitList = selectedFileType.toString().split('.');
-    if (splitList.length > 1) {
-      return dataFromDatabase[splitList[1]];
-    }
-    return null;
-  }
-
   Widget _buildFilePreview(ScholarshipService scholarshipService) {
     return Visibility(
-      visible: selectedFileType != null &&
-              dataFromDatabase[selectedFileType.toString().split('.')[1]] !=
-                  null ||
-          (selectedFileType == UrlFileType.bankaccount && !isBankAccountFile),
+      visible: true,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Padding(
@@ -131,11 +221,18 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               height: constraints.maxHeight == double.infinity
                   ? MediaQuery.of(context).size.height - 400
                   : constraints.maxHeight,
-              child: FilePreview(
-                fileType: selectedFileType!,
-                scholarshipService: scholarshipService,
-                storageService: widget.st,
-              ),
+              child: selectedFileType != null
+                  ? FilePreview(
+                      fileType: selectedFileType!,
+                      scholarshipService: scholarshipService,
+                      storageService: widget.st,
+                    )
+                  : Center(
+                      child: Text(
+                        'Select a file to preview',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
             ),
           );
         },
@@ -186,53 +283,98 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
     }
   }
 
-  Widget _buildListItem(
+  Widget _buildUploadRow(
       String title,
       String type,
       ScholarshipService scholarshipService,
       UrlFileType urlFileType,
       var dataFromDatabase) {
-    return ListTile(
-      tileColor: selectedFileType == urlFileType ? Colors.green[800] : null,
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      trailing: Icon(
-        dataFromDatabase[type] != null ? Icons.check : Icons.close,
-        color: dataFromDatabase[type] != null ? Colors.green : Colors.red,
-      ),
+    return GestureDetector(
       onTap: () {
         setState(() {
           selectedFileType = urlFileType;
           selectedFile = null;
         });
       },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        decoration: BoxDecoration(
+          color: selectedFileType == urlFileType ? Colors.green.shade200 : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(11, 81, 45, .3),
+              blurRadius: 20,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: selectedFileType == urlFileType ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Icon(
+              dataFromDatabase[type] != null ? Icons.check : Icons.close,
+              color: dataFromDatabase[type] != null ? Colors.green : Colors.red,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildBankAccountItem(ScholarshipService scholarshipService) {
     return Column(
       children: [
-        ListTile(
-          tileColor: selectedFileType == UrlFileType.bankaccount
-              ? Colors.green[800]
-              : null,
-          title: const Text('Numero de Banco',
-              style: TextStyle(color: Colors.white)),
-          trailing: Icon(
-            (dataFromDatabase['bankaccountURL'] != null ||
-                    dataFromDatabase['bankaccount'] != null)
-                ? Icons.check
-                : Icons.close,
-            color: (dataFromDatabase['bankaccountURL'] != null ||
-                    dataFromDatabase['bankaccount'] != null)
-                ? Colors.green
-                : Colors.red,
-          ),
+        GestureDetector(
           onTap: () {
             setState(() {
               selectedFileType = UrlFileType.bankaccount;
               selectedFile = null;
             });
           },
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            decoration: BoxDecoration(
+              color: selectedFileType == UrlFileType.bankaccount ? Colors.green.shade200 : Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(11, 81, 45, .3),
+                  blurRadius: 20,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Numero de Banco',
+                  style: TextStyle(
+                    color: selectedFileType == UrlFileType.bankaccount ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(
+                  (dataFromDatabase['bankaccountURL'] != null || dataFromDatabase['bankaccount'] != null)
+                      ? Icons.check
+                      : Icons.close,
+                  color: (dataFromDatabase['bankaccountURL'] != null || dataFromDatabase['bankaccount'] != null)
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ],
+            ),
+          ),
         ),
         Visibility(
           visible: selectedFileType == UrlFileType.bankaccount,
@@ -247,8 +389,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
           ),
         ),
         Visibility(
-          visible:
-              selectedFileType == UrlFileType.bankaccount && !isBankAccountFile,
+          visible: selectedFileType == UrlFileType.bankaccount && !isBankAccountFile,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -256,8 +397,10 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                 bankAccountText = value;
               },
               controller: TextEditingController(text: bankAccountText),
+              style: const TextStyle(color: Colors.black), // Black text
               decoration: const InputDecoration(
                 labelText: 'Bank Account Number',
+                labelStyle: TextStyle(color: Colors.black), // Black label text
                 border: OutlineInputBorder(),
               ),
             ),

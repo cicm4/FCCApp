@@ -35,7 +35,7 @@ class HelpButton extends StatelessWidget {
           ),
           child: Text(
             help.displayName,
-            style: TextStyle(fontSize: fontSize),
+            style: TextStyle(fontSize: fontSize, color: Colors.white),
           ),
         );
       },

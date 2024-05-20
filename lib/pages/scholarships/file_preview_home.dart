@@ -50,7 +50,7 @@ class _FilePreviewState extends State<FilePreview> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return const Text('');
+          return const Text('Error');
         } else {
           Uint8List? data = snapshot.data;
           String mimeType = lookupMimeType('', headerBytes: data) ?? '';
