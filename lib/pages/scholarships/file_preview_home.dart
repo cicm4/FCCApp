@@ -11,12 +11,14 @@ class FilePreview extends StatefulWidget {
   final UrlFileType fileType;
   final ScholarshipService scholarshipService;
   final StorageService storageService;
+  final bool isBankAccountFile;
 
   const FilePreview({
     super.key,
     required this.fileType,
     required this.scholarshipService,
     required this.storageService,
+    required this.isBankAccountFile,
   });
 
   @override
@@ -56,8 +58,13 @@ class _FilePreviewState extends State<FilePreview> {
           String mimeType = lookupMimeType('', headerBytes: data) ?? '';
 
           if (data == null) {
+            if(widget.fileType == UrlFileType.bankaccount && !widget.isBankAccountFile){
+              return const Text(''
+                );
+            } else {
             return const Text(
-                'No se puede mostrar el archivo o no hay archivo');
+                'No se puede mostrar el archivo o no hay archivo', style: TextStyle(color: Color.fromRGBO(117, 117, 117, 1)));
+            }
           } else if (mimeType.startsWith('image/')) {
             return Image.memory(data);
           } else if (mimeType == 'application/pdf') {

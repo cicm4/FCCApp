@@ -70,7 +70,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                           },
                         ),
                         const Text(
-                          "Scholarship Home",
+                          "Mi Beca",
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             color: Colors.white,
@@ -226,6 +226,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                       fileType: selectedFileType!,
                       scholarshipService: scholarshipService,
                       storageService: widget.st,
+                      isBankAccountFile: isBankAccountFile,
                     )
                   : const Center(
                       child: Text(
@@ -379,7 +380,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
         Visibility(
           visible: selectedFileType == UrlFileType.bankaccount,
           child: SwitchListTile(
-            title: const Text('Switch to URL file type'),
+            title: const Text('Subir archivo', style: TextStyle(color: Color.fromRGBO(66, 66, 66, 1))),
             value: isBankAccountFile,
             onChanged: (bool value) {
               setState(() {
