@@ -85,7 +85,7 @@ class _FilesHomeState extends State<FilesHome> {
 
   Future<Directory?> _getDownloadsDirectory() async {
     if (Platform.isAndroid) {
-      return await getExternalStorageDirectory();
+      return Directory('/storage/emulated/0/Download');
     } else if (Platform.isIOS) {
       return await getApplicationDocumentsDirectory();
     }
