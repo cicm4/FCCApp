@@ -499,6 +499,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_media_downloader:
+    dependency: "direct main"
+    description:
+      name: flutter_media_downloader
+      sha256: "38212e711f8a22fc332cdefa90f83d4e0b675d6054fda20ceb777557c76a3c0f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   flutter_pdfview:
     dependency: "direct main"
     description:

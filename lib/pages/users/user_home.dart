@@ -154,9 +154,9 @@ class _UserHomeState extends State<UserHome> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                        return CircleAvatar(
+                        return const CircleAvatar(
                           radius: 50,
-                          backgroundImage: const AssetImage('assets/defaultimage.jpg'),
+                          backgroundImage: AssetImage('assets/defaultimage.jpg'),
                         );
                       } else {
                         return CircleAvatar(

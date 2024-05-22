@@ -4,7 +4,7 @@ class DownloadButton extends StatelessWidget {
   final Function onDownload;
   final bool isLoading;
 
-  DownloadButton({required this.onDownload, required this.isLoading});
+  const DownloadButton({required this.onDownload, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class DownloadButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),
-      child: Center(
+      child: const Center(
         child: Text(
           "Descargar Archivo",
           style: TextStyle(

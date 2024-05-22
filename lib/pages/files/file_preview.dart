@@ -4,7 +4,7 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 class FilePreview extends StatelessWidget {
   final String? pdfFilePath;
 
-  const FilePreview({required this.pdfFilePath});
+  const FilePreview({super.key, required this.pdfFilePath});
 
   @override
   Widget build(BuildContext context) {

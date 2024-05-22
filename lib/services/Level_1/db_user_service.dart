@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 class DBUserService {
   final UserService userService;
   final DBService dbService;
-  bool _filePickerActive = false;
 
   DBUserService({required this.userService, required this.dbService});
 
@@ -58,8 +57,6 @@ class DBUserService {
   }
 
   Future<List<dynamic>?> pickProfilePicture() async {
-    if (_filePickerActive) return null;
-    _filePickerActive = true;
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -77,8 +74,6 @@ class DBUserService {
         throw Exception('Error getting file: $e');
       }
       return null;
-    } finally {
-      _filePickerActive = false;
     }
   }
 

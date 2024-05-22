@@ -1,22 +1,17 @@
 import 'dart:io';
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:fccapp/services/Level_0/database_service.dart';
-import 'package:fccapp/services/Level_0/user_service.dart';
-import 'package:fccapp/services/Level_1/db_user_service.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'file_selection.dart';
 import 'file_preview.dart';
 import 'download_button.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:fccapp/services/Level_1/db_user_service.dart';
 
 class FilesHome extends StatefulWidget {
-  final DBService dbs;
   final DBUserService dus;
 
-  FilesHome({super.key, required this.dbs})
-      : dus = DBUserService(userService: UserService(), dbService: dbs);
+  FilesHome({super.key, required this.dus});
 
   @override
   State<FilesHome> createState() => _FilesHomeState();
@@ -35,6 +30,7 @@ class _FilesHomeState extends State<FilesHome> {
 
   Future<void> _init() async {
     String? userName = await widget.dus.getUserName();
+    if (!mounted) return; // Check if the widget is still mounted
     setState(() {
       _isLoading = false;
     });
@@ -57,33 +53,49 @@ class _FilesHomeState extends State<FilesHome> {
     await file.writeAsBytes(bytes);
     document.dispose();
 
+    if (!mounted) return; // Check if the widget is still mounted
     setState(() {
       _pdfFilePath = file.path;
     });
   }
 
-  Future<void> _saveFile(String fileName) async {
-    if (Platform.isIOS) {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(await File(_pdfFilePath!).readAsBytes());
-    } else if (Platform.isAndroid) {
-      var status = await Permission.storage.status;
-      if (status != PermissionStatus.granted) {
-        status = await Permission.storage.request();
+  Future<void> _downloadFile() async {
+    if (_pdfFilePath != null) {
+      try {
+        final Directory? downloadsDir = await _getDownloadsDirectory();
+        if (downloadsDir == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to access storage')));
+          return;
+        }
+
+        final String newFilePath = '${downloadsDir.path}/Certificate_${_selectedCertificate}.pdf';
+        final File newFile = File(newFilePath);
+        await newFile.writeAsBytes(await File(_pdfFilePath!).readAsBytes());
+
+        if (!mounted) return; // Check if the widget is still mounted
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved to $newFilePath')));
+      } catch (e) {
+        if (!mounted) return; // Check if the widget is still mounted
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error saving file: $e')));
       }
-      if (status.isGranted) {
-        const downloadsFolderPath = '/storage/emulated/0/Download/';
-        final Directory dir = Directory(downloadsFolderPath);
-        final file = File('${dir.path}/$fileName');
-        await file.writeAsBytes(await File(_pdfFilePath!).readAsBytes());
-      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No file to download')));
     }
+  }
+
+  Future<Directory?> _getDownloadsDirectory() async {
+    if (Platform.isAndroid) {
+      return await getExternalStorageDirectory();
+    } else if (Platform.isIOS) {
+      return await getApplicationDocumentsDirectory();
+    }
+    return null;
   }
 
   void selectCertificate(String certificate) async {
     String? userName = await widget.dus.getUserName();
     await _createPdf(certificate, userName!);
+    if (!mounted) return; // Check if the widget is still mounted
     setState(() {
       _selectedCertificate = certificate;
     });
@@ -168,7 +180,7 @@ class _FilesHomeState extends State<FilesHome> {
                                 ),
                                 SizedBox(height: 20),
                                 DownloadButton(
-                                  onDownload: () => _saveFile('Certificate_${_selectedCertificate}.pdf'),
+                                  onDownload: _downloadFile,
                                   isLoading: _isLoading,
                                 ),
                                 SizedBox(height: 20),
