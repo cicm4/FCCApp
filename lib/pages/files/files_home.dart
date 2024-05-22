@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'file_selection.dart';
@@ -21,6 +22,7 @@ class _FilesHomeState extends State<FilesHome> {
   String? _pdfFilePath;
   bool _isLoading = true;
   String _selectedCertificate = '';
+  String? _userName;
 
   @override
   void initState() {
@@ -29,12 +31,11 @@ class _FilesHomeState extends State<FilesHome> {
   }
 
   Future<void> _init() async {
-    String? userName = await widget.dus.getUserName();
-    if (!mounted) return; // Check if the widget is still mounted
+    _userName = await widget.dus.getUserName();
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
-    await _createPdf('Certificado 1', userName!); // Load default certificate
   }
 
   Future<void> _createPdf(String certificateType, String userName) async {
@@ -43,7 +44,7 @@ class _FilesHomeState extends State<FilesHome> {
       'Certificate Type: $certificateType\nUser: $userName',
       PdfStandardFont(PdfFontFamily.helvetica, 12),
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
-      bounds: const Rect.fromLTWH(0, 0, 150, 20),
+      bounds: const Rect.fromLTWH(0, 0, 300, 20),
     );
 
     final Directory tempDir = await getTemporaryDirectory();
@@ -53,7 +54,7 @@ class _FilesHomeState extends State<FilesHome> {
     await file.writeAsBytes(bytes);
     document.dispose();
 
-    if (!mounted) return; // Check if the widget is still mounted
+    if (!mounted) return;
     setState(() {
       _pdfFilePath = file.path;
     });
@@ -64,22 +65,22 @@ class _FilesHomeState extends State<FilesHome> {
       try {
         final Directory? downloadsDir = await _getDownloadsDirectory();
         if (downloadsDir == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to access storage')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Unable to access storage')));
           return;
         }
 
-        final String newFilePath = '${downloadsDir.path}/Certificate_${_selectedCertificate}.pdf';
+        final String newFilePath = '${downloadsDir.path}/Certificate_$_selectedCertificate.pdf';
         final File newFile = File(newFilePath);
         await newFile.writeAsBytes(await File(_pdfFilePath!).readAsBytes());
 
-        if (!mounted) return; // Check if the widget is still mounted
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved to $newFilePath')));
       } catch (e) {
-        if (!mounted) return; // Check if the widget is still mounted
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error saving file: $e')));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No file to download')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No file to download')));
     }
   }
 
@@ -93,12 +94,13 @@ class _FilesHomeState extends State<FilesHome> {
   }
 
   void selectCertificate(String certificate) async {
-    String? userName = await widget.dus.getUserName();
-    await _createPdf(certificate, userName!);
-    if (!mounted) return; // Check if the widget is still mounted
-    setState(() {
-      _selectedCertificate = certificate;
-    });
+    if (_userName != null) {
+      await _createPdf(certificate, _userName!);
+      if (!mounted) return;
+      setState(() {
+        _selectedCertificate = certificate;
+      });
+    }
   }
 
   @override
@@ -108,7 +110,7 @@ class _FilesHomeState extends State<FilesHome> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -122,19 +124,19 @@ class _FilesHomeState extends State<FilesHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 80),
+            const SizedBox(height: 80),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                  Text(
+                  const Text(
                     "Pedir Certificado",
                     style: TextStyle(
                       fontFamily: 'Montserrat',
@@ -143,20 +145,20 @@ class _FilesHomeState extends State<FilesHome> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 48),
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 reverse: true,
                 child: Padding(
                   padding: EdgeInsets.only(left: 5, right: 5, bottom: bottomInset),
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOut,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
@@ -164,26 +166,26 @@ class _FilesHomeState extends State<FilesHome> {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           FadeInUp(
-                            duration: Duration(milliseconds: 1400),
+                            duration: const Duration(milliseconds: 1400),
                             child: Column(
                               children: [
                                 FileSelection(
                                   selectedCertificate: _selectedCertificate,
                                   onSelect: selectCertificate,
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 DownloadButton(
                                   onDownload: _downloadFile,
-                                  isLoading: _isLoading,
+                                  isLoading: _selectedCertificate.isEmpty,
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 FilePreview(
                                   pdfFilePath: _pdfFilePath,
                                 ),
@@ -200,6 +202,129 @@ class _FilesHomeState extends State<FilesHome> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class FileSelection extends StatelessWidget {
+  final String selectedCertificate;
+  final Function(String) onSelect;
+
+  const FileSelection({
+    Key? key,
+    required this.selectedCertificate,
+    required this.onSelect,
+  }) : super(key: key);
+
+  Widget _buildCertificateRow(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () => onSelect(title),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        decoration: BoxDecoration(
+          color: selectedCertificate == title ? Colors.green.shade200 : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromRGBO(11, 81, 45, .3),
+              blurRadius: 20,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w600,
+                color: selectedCertificate == title ? Colors.white : Colors.black,
+              ),
+            ),
+            if (selectedCertificate == title)
+              const Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildCertificateRow(context, "Certificado 1"),
+        _buildCertificateRow(context, "Certificado 2"),
+        _buildCertificateRow(context, "Certificado 3"),
+        _buildCertificateRow(context, "Certificado 4"),
+      ],
+    );
+  }
+}
+
+class DownloadButton extends StatelessWidget {
+  final Function onDownload;
+  final bool isLoading;
+
+  const DownloadButton({
+    Key? key,
+    required this.onDownload,
+    required this.isLoading,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: isLoading ? null : () => onDownload(),
+      height: 50,
+      color: const Color(0xFF0b512d),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: const Center(
+        child: Text(
+          "Descargar Archivo",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FilePreview extends StatelessWidget {
+  final String? pdfFilePath;
+
+  const FilePreview({
+    Key? key,
+    required this.pdfFilePath,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.35,
+      color: Colors.grey.shade300,
+      child: pdfFilePath == null
+          ? const Center(child: Text('No file selected', style: TextStyle(fontSize: 18)))
+          : PDFView(
+              filePath: pdfFilePath!,
+              autoSpacing: true,
+              enableSwipe: true,
+              pageSnap: true,
+              swipeHorizontal: true,
+              nightMode: true,
+            ),
     );
   }
 }

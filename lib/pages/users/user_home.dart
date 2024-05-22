@@ -83,7 +83,6 @@ class _UserHomeState extends State<UserHome> {
     final result = await widget.dbu.pickProfilePicture();
     if (result != null) {
       File file = result[0];
-      String fileName = result[1];
 
       bool? confirm = await showDialog<bool>(
         context: context,

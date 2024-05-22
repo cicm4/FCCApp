@@ -1,8 +1,6 @@
 import 'package:fccapp/pages/files/files_home.dart';
 import 'package:fccapp/pages/helps/help_home.dart';
 import 'package:fccapp/pages/scholarships/scholarship_home.dart';
-import 'package:fccapp/pages/test/download_test.dart';
-import 'package:fccapp/pages/test/test.dart';
 import 'package:fccapp/pages/users/user_home.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
@@ -32,6 +30,6 @@ Map<String, WidgetBuilder> getAppRoutes(
     '/userHome': (context) => UserHome(dbu: DBUserService(userService: UserService(), dbService: dbs)),
 
     //test
-    '/test': (context) => CertificatePage(),
+    '/test': (context) => const HelpHome(),
   };
 }

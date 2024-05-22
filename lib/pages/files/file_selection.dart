@@ -4,18 +4,18 @@ class FileSelection extends StatelessWidget {
   final String selectedCertificate;
   final Function(String) onSelect;
 
-  FileSelection({required this.selectedCertificate, required this.onSelect});
+  const FileSelection({super.key, required this.selectedCertificate, required this.onSelect});
 
   Widget _buildCertificateRow(BuildContext context, String title) {
     return GestureDetector(
       onTap: () => onSelect(title),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: BoxDecoration(
           color: selectedCertificate == title ? Colors.green.shade200 : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(11, 81, 45, .3),
               blurRadius: 20,
@@ -35,7 +35,7 @@ class FileSelection extends StatelessWidget {
               ),
             ),
             if (selectedCertificate == title)
-              Icon(
+              const Icon(
                 Icons.check,
                 color: Colors.white,
               ),
