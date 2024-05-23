@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
                           const SizedBox(height: 30), // Increased space to lower the section
                           ScholarshipSection(dbs: widget.dbs, scholarshipService: scholarshipService),
                           const HelpPapersSection(),
-                          const TestSection(),
+                          //const TestSection(),
                           const Spacer(),
                           const LogoutButton(),
                           const SizedBox(height: 20),

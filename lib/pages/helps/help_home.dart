@@ -1,8 +1,11 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fccapp/services/level_2/help_service.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 import 'help_button.dart';
 
 class HelpHome extends StatefulWidget {
@@ -17,6 +20,7 @@ class _HelpHomeState extends State<HelpHome> {
   bool _showTextBox = false;
   bool _showLoading = false;
   Help? _selectedHelp;
+  File? _selectedFile;
 
   @override
   void initState() {
@@ -37,16 +41,55 @@ class _HelpHomeState extends State<HelpHome> {
     });
   }
 
+  Future<void> _pickFile() async {
+    final result = await pickExtraFile();
+    if (result != null) {
+      setState(() {
+        _selectedFile = result[0] as File;
+      });
+    }
+  }
+
   void _handleSend() async {
+    if (_selectedFile == null) {
+      // Show an alert if no file is selected
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Anexa un archivo'),
+          content: const Text('Por favor, anexa un archivo para enviar tu mensaje'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _showLoading = true;
     });
+
     bool success = await HelpService.makeRequest(
-        _selectedHelp!, _messageController.text, UserService(), DBService());
+      help: _selectedHelp!,
+      message: _messageController.text,
+      st: StorageService(),
+      dbs: DBService(),
+      us: UserService(),
+      file: _selectedFile!,
+    );
+
     if (!mounted) return; // Check if the widget is still in the tree
+
     setState(() {
       _showLoading = false;
     });
+
     if (success) {
       showDialog(
         context: context,
@@ -81,8 +124,8 @@ class _HelpHomeState extends State<HelpHome> {
             begin: Alignment.topCenter,
             colors: [
               Color(0xFF0b512d),
-                Color(0xFFe6e6e3),
-                Color(0xFF22c0c6),
+              Color(0xFFe6e6e3),
+              Color(0xFF22c0c6),
             ],
           ),
         ),
@@ -119,8 +162,7 @@ class _HelpHomeState extends State<HelpHome> {
               child: SingleChildScrollView(
                 reverse: true,
                 child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 5, right: 5, bottom: bottomInset),
+                  padding: EdgeInsets.only(left: 5, right: 5, bottom: bottomInset),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOut,
@@ -144,28 +186,17 @@ class _HelpHomeState extends State<HelpHome> {
                             child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    _buildHelpButton(Help.zapato),
-                                    _buildHelpButton(Help.dermatologico),
+                                    _buildHelpButton(Help.deportivo),
+                                    _buildHelpButton(Help.academico),
                                   ],
                                 ),
                                 const SizedBox(height: 20),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    _buildHelpButton(Help.oftamologico),
-                                    _buildHelpButton(Help.calamidad),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    _buildHelpButton(Help.tutoria),
+                                    _buildHelpButton(Help.salud),
                                     _buildHelpButton(Help.otro),
                                   ],
                                 ),
@@ -174,7 +205,7 @@ class _HelpHomeState extends State<HelpHome> {
                                   TextField(
                                     controller: _messageController,
                                     style: const TextStyle(
-                                      color: Colors.black
+                                      color: Colors.black,
                                     ),
                                     decoration: InputDecoration(
                                       hintText: "Enter your message here",
@@ -184,11 +215,22 @@ class _HelpHomeState extends State<HelpHome> {
                                     ),
                                   ),
                                   const SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: _pickFile,
+                                    child: const Text('Anexar Archivo'),
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                                      foregroundColor: MaterialStateProperty.all(Color(0xFF0b512d)),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  if (_selectedFile != null)
+                                    Text('File: ${_selectedFile!.path.split('/').last}'),
+                                  const SizedBox(height: 10),
                                   MaterialButton(
-                                    onPressed:
-                                        _messageController.text.isNotEmpty
-                                            ? _handleSend
-                                            : null,
+                                    onPressed: _messageController.text.isNotEmpty
+                                        ? _handleSend
+                                        : null,
                                     height: 50,
                                     color: Colors.teal[600],
                                     shape: RoundedRectangleBorder(
@@ -223,7 +265,6 @@ class _HelpHomeState extends State<HelpHome> {
       ),
     );
   }
-  
 
   Widget _buildHelpButton(Help help) {
     return HelpButton(

@@ -23,6 +23,12 @@ class DBUserService {
     return user?['displayName'];
   }
 
+  Future<String?> getUserUID() async {
+    var user = await dbService.getFromDB(
+        path: 'users', data: '${userService.user?.uid}');
+    return user?['uid'];
+  }
+
   Future<Uint8List?> getProfilePicture({required StorageService st}) async {
     var user = await dbService.getFromDB(
         path: 'users', data: '${userService.user?.uid}');
