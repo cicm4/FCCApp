@@ -20,7 +20,8 @@ class _HelpHomeState extends State<HelpHome> {
   bool _showTextBox = false;
   bool _showLoading = false;
   Help? _selectedHelp;
-  File? _selectedFile;
+  dynamic _selectedFile;
+  String? _name;
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _HelpHomeState extends State<HelpHome> {
     if (result != null) {
       setState(() {
         _selectedFile = result[0] as File;
+        _name = result[1] as String;
       });
     }
   }
@@ -82,6 +84,7 @@ class _HelpHomeState extends State<HelpHome> {
       dbs: DBService(),
       us: UserService(),
       file: _selectedFile!,
+      name: _name!,
     );
 
     if (!mounted) return; // Check if the widget is still in the tree

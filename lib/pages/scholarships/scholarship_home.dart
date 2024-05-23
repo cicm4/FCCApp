@@ -200,7 +200,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
                   !isBankAccountFile)),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.teal[600],
+          backgroundColor: const Color(0xFF0b512d),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
@@ -209,7 +209,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
             scholarshipService, selectedFileType.toString().split('.')[1]),
         child: isUploading
             ? const CircularProgressIndicator()
-            : const Text('Upload File', style: TextStyle(color: Colors.white)),
+            : const Text('Subir Archivo', style: TextStyle(color: Colors.white)),
       ),
     );
   }

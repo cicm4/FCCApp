@@ -1,4 +1,5 @@
   import 'dart:io';
+import 'dart:math';
 
   import 'package:fccapp/services/Level_0/database_service.dart';
   import 'package:fccapp/services/Level_0/storage_service.dart';
@@ -8,7 +9,7 @@
 
   class HelpService {
     static Future<bool> makeRequest({
-      required Help help, required String message, required UserService us, required DBService dbs, required File file, required StorageService st}) async {
+      required Help help, required String message, required UserService us, required DBService dbs, required File file, required StorageService st, required String name}) async {
       //get UID
       String? uid = us.user?.uid.toString();
 
@@ -36,12 +37,10 @@
           'id': id
         };
 
-        await _addExtraFile(dbs: dbs, file: file, st: st, uid: uid, id: id);
-
-        String name = uid + DateTime.now().toString() + help.toString();
+        await _addExtraFile(dbs: dbs, file: file, st: st, uid: uid, id: id, name: name);
 
         await dbs.addEntryToDBWithName(
-            path: 'adminNotification', entry: data, name: name);
+            path: 'adminNotification', entry: data, name: id);
 
         return true;
       } catch (e) {
@@ -73,11 +72,7 @@
 
   //returns 10 random digits used as ID for request
   String _random10Digits() {
-    String result = '';
-    for (int i = 0; i < 10; i++) {
-      result += (0 + (10 * (DateTime.now().microsecondsSinceEpoch % 1))).toString();
-    }
-    return result;
+    return Random.secure().nextInt(2000000000).toString();
   }
 
   Future<String> _idGenerator(DBService dbs) async{
@@ -90,10 +85,13 @@
     }
   }
 
-  Future<bool> _addExtraFile({required DBService dbs, required File file, required StorageService st, required String uid, required String id}) async {
+  Future<bool> _addExtraFile({required DBService dbs, required File file, required StorageService st, required String uid, required String id, required String name}) async {
     try {
+      //parse name extension
+      String extension = name.split('.').last;
+      String fileName = '$id.$extension';
       final data = {'id': id, 'uid': uid};
-      bool stAddition = await st.addFile(file: file, data: id, path: 'helps/');
+      bool stAddition = await st.addFile(file: file, data: fileName, path: 'helps/');
       if(stAddition){
         return true;
       } else {
