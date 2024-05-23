@@ -174,11 +174,11 @@ class _UserRegisterState extends State<UserRegister> {
                             _buildTextField(
                               controller: _nameController,
                               icon: Icons.person,
-                              hintText: 'Nombre',
+                              hintText: 'Nombre Completo',
                               obscureText: false,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Por favor, introduzca su nombre.';
+                                  return 'Por favor, introduzca su nombre completo.';
                                 }
                                 return null;
                               },

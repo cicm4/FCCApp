@@ -6,6 +6,8 @@ import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:intl/intl.dart';
+
 
 class UserHome extends StatefulWidget {
   final DBUserService dbu;
@@ -170,7 +172,7 @@ class _UserHomeState extends State<UserHome> {
               const SizedBox(height: 20),
               EditableProfileRow(
                 iconPath: 'assets/nameicon.png',
-                label: 'Nombre: ',
+                label: 'Nombre Completo: ',
                 value: userData['displayName'] ?? '',
                 isEditing: _isEditing,
                 onChanged: (value) => userData['displayName'] = value,
@@ -214,6 +216,22 @@ class _UserHomeState extends State<UserHome> {
                 options: _sports,
                 isEditing: _isEditing,
                 onChanged: (value) => userData['sport'] = value,
+              ),
+              const SizedBox(height: 20),
+              EditableProfileRow(
+                iconPath: 'assets/dateicon.png', // Add an appropriate icon for date
+                label: 'Fecha de inicio: ',
+                value: userData['startDate'] != null
+                    ? DateFormat('yyyy-MM-dd').format(DateTime.parse(userData['startDate']))
+                    : '',
+                isEditing: _isEditing,
+                onChanged: (value) => userData['startDate'] = value,
+                isDate: true, // Custom field to handle date picking
+                onDatePicked: (date) {
+                  userData['startDate'] = date != null
+                      ? DateFormat('yyyy-MM-dd').format(date)
+                      : null;
+                },
               ),
               const SizedBox(height: 20),
               Row(

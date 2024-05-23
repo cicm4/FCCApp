@@ -208,6 +208,17 @@ class AuthService {
     return false;
   }
 
+  Future<bool> sendResetPasswordEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// Register a new user with email and password.
   ///
   /// This method attempts to register a new user using their email and password.

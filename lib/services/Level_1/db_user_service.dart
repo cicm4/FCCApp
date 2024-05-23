@@ -39,7 +39,7 @@ class DBUserService {
 
   Future<bool> updateUserProfile(Map<String, dynamic> data) async {
     try {
-      List<String> disallowedFields = ['uid', 'photo', 'type', 'startDate'];
+      List<String> disallowedFields = ['uid', 'photo', 'type'];
       var user = await dbService.getFromDB(
           path: 'users', data: '${userService.user?.uid}');
       if (user == null) {

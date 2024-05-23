@@ -1,5 +1,6 @@
 import 'package:fccapp/pages/files/files_home.dart';
 import 'package:fccapp/pages/helps/help_home.dart';
+import 'package:fccapp/pages/home/reset_password.dart';
 import 'package:fccapp/pages/scholarships/scholarship_home.dart';
 import 'package:fccapp/pages/users/user_home.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
@@ -28,6 +29,7 @@ Map<String, WidgetBuilder> getAppRoutes(
     '/helpHome': (context) => const HelpHome(),
     '/filesHome': (context) => FilesHome(dus: DBUserService(userService: UserService(), dbService: dbs),),
     '/userHome': (context) => UserHome(dbu: DBUserService(userService: UserService(), dbService: dbs)),
+    '/resetpassword': (context) => ResetPasswordHome(auth: auth),
 
     //test
     '/test': (context) => const HelpHome(),

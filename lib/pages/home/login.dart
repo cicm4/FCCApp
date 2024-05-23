@@ -228,16 +228,27 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 40),
+                                  const SizedBox(height: 20),
                                   FadeInUp(
                                     duration:
                                         const Duration(milliseconds: 1500),
-                                    child: const Text(
-                                      "Olvide mi contraseña?",
-                                      style: TextStyle(color: Colors.grey),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        //navigator to reset password
+                                        Navigator.pushNamed(
+                                            context, '/resetpassword');
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                      ),
+                                      child: const Text(
+                                        "Olvide mi contraseña?",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 40),
+                                  const SizedBox(height: 20),
                                   FadeInUp(
                                     duration:
                                         const Duration(milliseconds: 1600),
