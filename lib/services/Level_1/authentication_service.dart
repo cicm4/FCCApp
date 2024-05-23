@@ -129,7 +129,8 @@ class AuthService {
       String? phone,
       String? sport,
       String? gid,
-      String? location}) async {
+      String? location,
+      String? startDate}) async {
     try {
       UserService us = UserService();
       String? uid = us.user!.uid;
@@ -152,6 +153,7 @@ class AuthService {
         'sport': sport,
         'gid': gid,
         'location': location,
+        'startDate': startDate,
       };
 
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
@@ -223,7 +225,8 @@ class AuthService {
       required phone,
       required sport,
       required gid,
-      required location}) async {
+      required location,
+      required startDate}) async {
     // Register with email and password
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -232,7 +235,7 @@ class AuthService {
       );
       // Add the new user to the database
       await _addNewUserToDB(
-          name: name, phone: phone, sport: sport, gid: gid, location: location);
+          name: name, phone: phone, sport: sport, gid: gid, location: location, startDate: startDate);
 
       // If the user is successfully registered, return 'Success'
       return 'Success';

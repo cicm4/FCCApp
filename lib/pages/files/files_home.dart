@@ -4,15 +4,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'file_selection.dart';
-import 'file_preview.dart';
-import 'download_button.dart';
 import 'package:fccapp/services/Level_1/db_user_service.dart';
 
 class FilesHome extends StatefulWidget {
   final DBUserService dus;
 
-  FilesHome({super.key, required this.dus});
+  const FilesHome({super.key, required this.dus});
 
   @override
   State<FilesHome> createState() => _FilesHomeState();
@@ -211,10 +208,10 @@ class FileSelection extends StatelessWidget {
   final Function(String) onSelect;
 
   const FileSelection({
-    Key? key,
+    super.key,
     required this.selectedCertificate,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   Widget _buildCertificateRow(BuildContext context, String title) {
     return GestureDetector(
@@ -273,10 +270,10 @@ class DownloadButton extends StatelessWidget {
   final bool isLoading;
 
   const DownloadButton({
-    Key? key,
+    super.key,
     required this.onDownload,
     required this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -305,9 +302,9 @@ class FilePreview extends StatelessWidget {
   final String? pdfFilePath;
 
   const FilePreview({
-    Key? key,
+    super.key,
     required this.pdfFilePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

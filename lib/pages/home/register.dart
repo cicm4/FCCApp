@@ -1,5 +1,6 @@
-import 'package:fccapp/services/Level_1/authentication_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fccapp/services/Level_1/authentication_service.dart';
+import 'package:intl/intl.dart';
 import '../../shared/loading.dart';
 
 class UserRegister extends StatefulWidget {
@@ -20,25 +21,29 @@ class _UserRegisterState extends State<UserRegister> {
   final _phoneController = TextEditingController();
   final _gidController = TextEditingController();
   String _selectedLocation = 'Medellin';
-  String _selectedSport = 'tennis';
+  String _selectedSport = 'Tennis';
   late String _errorText = '';
   bool _isLoading = false;
+  DateTime? _selectedDate;
 
   Future<void> _register() async {
-    if (_formKey.currentState!.validate() == true) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
       String registration = await widget.auth.registerWithEmailAndPass(
-          emailAddress: _emailController.text,
-          password: _passwordController.text,
-          name: _nameController.text,
-          phone: _phoneController.text,
-          gid: _gidController.text,
-          location: _selectedLocation,
-          sport: _selectedSport);
+        emailAddress: _emailController.text,
+        password: _passwordController.text,
+        name: _nameController.text,
+        phone: _phoneController.text,
+        gid: _gidController.text,
+        location: _selectedLocation,
+        sport: _selectedSport,
+        startDate: _selectedDate != null
+            ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+            : '',
+      );
       if (registration == 'Success') {
-        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       } else {
         setState(() {
@@ -52,306 +57,310 @@ class _UserRegisterState extends State<UserRegister> {
           children: [
             Text(_emailController.text),
             Text(_passwordController.text),
-            Text(_securePasswordController.text)
+            Text(_securePasswordController.text),
           ],
         ),
       ));
     }
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Registro de usuario',
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF0b512d),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              "Registro de usuario",
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            centerTitle: true,
           ),
-          backgroundColor: Colors.green[700],
-        ),
-        backgroundColor: Colors.white,
-        body: _isLoading
-            ? const Loading() // Add this line
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height / 3,
-                      child: const FlutterLogo(),
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Telefono',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                TextFormField(
-                                  controller: _phoneController,
-                                  // Rest of your code...
-                                ),
-                                const Text(
-                                  'GID',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                TextFormField(
-                                  controller: _gidController,
-                                  // Rest of your code...
-                                ),
-                                const Text(
-                                  'Location',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                DropdownButton<String>(
-                                  value: _selectedLocation,
-                                  items: <String>['Medellin', 'Llano Grande']
-                                      .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedLocation = newValue!;
-                                    });
-                                  },
-                                ),
-                                const Text(
-                                  'Sport',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                DropdownButton<String>(
-                                  value: _selectedSport,
-                                  items: <String>['tennis', 'golf']
-                                      .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedSport = newValue!;
-                                    });
-                                  },
-                                ),
-                                const Text(
-                                  'Email',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.black,
-                                  ),
-                                  child: TextFormField(
-                                    controller: _emailController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(
-                                        Icons.email,
-                                        color: Colors.white,
-                                      ),
-                                      hintText: 'Email',
-                                      hintStyle: TextStyle(color: Colors.white),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor introduzca su correo electrónico.';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                const Text(
-                                  'Contraseña',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.black,
-                                  ),
-                                  child: TextFormField(
-                                    controller: _passwordController,
-                                    obscureText: true,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(
-                                        Icons.lock,
-                                        color: Colors.white,
-                                      ),
-                                      hintText: 'Contraseña',
-                                      hintStyle: TextStyle(color: Colors.white),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, introduzca su contraseña.';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                const Text(
-                                  'Reingresar Contraseña',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.black,
-                                  ),
-                                  child: TextFormField(
-                                    controller: _securePasswordController,
-                                    obscureText: true,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(
-                                        Icons.lock,
-                                        color: Colors.white,
-                                      ),
-                                      hintText: 'Reingresar Contraseña',
-                                      hintStyle: TextStyle(color: Colors.white),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, introduzca otra vez su contraseña.';
-                                      } else if (value !=
-                                          _passwordController.text) {
-                                        return 'Las contraseñas no coinciden.';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                const Text(
-                                  'Name',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.black,
-                                  ),
-                                  child: TextFormField(
-                                    controller: _nameController, // Step 2
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(
-                                        Icons.person,
-                                        color: Colors.white,
-                                      ),
-                                      hintText: 'Nombre',
-                                      hintStyle: TextStyle(color: Colors.white),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your name.';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 35),
-                                GestureDetector(
-                                  onTap: _register,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: Colors.black,
-                                    ),
-                                    child: const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'Crear Cuenta',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                Text(
-                                  _errorText,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              ],
+          backgroundColor: const Color(0xFF0b512d),
+          body: _isLoading
+              ? const Loading()
+              : Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF0b512d),
+                      Color(0xFFe6e6e3),
+                    ],
+                  ),
+                ),
+                child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'assets/LOGOFCC.png',
+                                height: 295,
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 20),
+                            _buildTextField(
+                              controller: _emailController,
+                              icon: Icons.email,
+                              hintText: 'Correo electrónico',
+                              obscureText: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor introduzca su correo electrónico.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField(
+                              controller: _passwordController,
+                              icon: Icons.lock,
+                              hintText: 'Contraseña',
+                              obscureText: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor, introduzca su contraseña.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField(
+                              controller: _securePasswordController,
+                              icon: Icons.lock,
+                              hintText: 'Reingresar Contraseña',
+                              obscureText: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor, introduzca otra vez su contraseña.';
+                                } else if (value != _passwordController.text) {
+                                  return 'Las contraseñas no coinciden.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField(
+                              controller: _nameController,
+                              icon: Icons.person,
+                              hintText: 'Nombre',
+                              obscureText: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor, introduzca su nombre.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField(
+                              controller: _phoneController,
+                              icon: Icons.phone,
+                              hintText: 'Telefono',
+                              obscureText: false,
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField(
+                              controller: _gidController,
+                              icon: Icons.credit_card,
+                              hintText: 'GID',
+                              obscureText: false,
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Location',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            _buildDropdown(
+                              value: _selectedLocation,
+                              items: ['Medellin', 'Llano Grande'],
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedLocation = newValue!;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Sport',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            _buildDropdown(
+                              value: _selectedSport,
+                              items: ['Tennis', 'Golf'],
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedSport = newValue!;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Dia de ingreso a la fundación',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              onTap: () => _selectDate(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.calendar_today, color: Colors.white),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      _selectedDate == null
+                                          ? 'Seleccionar fecha'
+                                          : DateFormat('yyyy-MM-dd').format(_selectedDate!),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: _register,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                                ),
+                                child: const Text(
+                                  "Crear Cuenta",
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Center(
+                              child: Text(
+                                _errorText,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
               ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required IconData icon,
+    required String hintText,
+    required bool obscureText,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.white),
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.white),
+        filled: true,
+        fillColor: Colors.black,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButton<String>(
+        value: value,
+        items: items.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        dropdownColor: Colors.black,
+        iconEnabledColor: Colors.white,
+        underline: const SizedBox.shrink(),
       ),
     );
   }
@@ -362,6 +371,8 @@ class _UserRegisterState extends State<UserRegister> {
     _passwordController.dispose();
     _securePasswordController.dispose();
     _nameController.dispose();
+    _phoneController.dispose();
+    _gidController.dispose();
     super.dispose();
   }
 }

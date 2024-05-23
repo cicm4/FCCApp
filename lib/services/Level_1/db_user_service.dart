@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
@@ -40,7 +39,7 @@ class DBUserService {
 
   Future<bool> updateUserProfile(Map<String, dynamic> data) async {
     try {
-      List<String> disallowedFields = ['uid', 'photo', 'type'];
+      List<String> disallowedFields = ['uid', 'photo', 'type', 'startDate'];
       var user = await dbService.getFromDB(
           path: 'users', data: '${userService.user?.uid}');
       if (user == null) {

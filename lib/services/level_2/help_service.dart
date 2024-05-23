@@ -90,7 +90,6 @@ import 'dart:math';
       //parse name extension
       String extension = name.split('.').last;
       String fileName = '$id.$extension';
-      final data = {'id': id, 'uid': uid};
       bool stAddition = await st.addFile(file: file, data: fileName, path: 'helps/');
       if(stAddition){
         return true;

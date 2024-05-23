@@ -69,13 +69,12 @@ class _LoginState extends State<Login> {
             ? const Loading()
             : Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     colors: [
-                      Colors.teal.shade600,
-                      Colors.green.shade300,
-                      Colors.tealAccent.shade400,
+                      Color(0xFF0b512d),
+                      Color(0xFFe6e6e3),
                     ],
                   ),
                 ),
@@ -120,7 +119,9 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(right: 30), // Adjust the right padding as needed
+                            padding: const EdgeInsets.only(
+                                right:
+                                    30), // Adjust the right padding as needed
                             child: SizedBox(
                               width: 115, // Adjust the size as needed
                               child: Image.asset('assets/LOGOFCC.png'),
@@ -148,14 +149,16 @@ class _LoginState extends State<Login> {
                                 children: <Widget>[
                                   const SizedBox(height: 60),
                                   FadeInUp(
-                                    duration: const Duration(milliseconds: 1400),
+                                    duration:
+                                        const Duration(milliseconds: 1400),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: const [
                                           BoxShadow(
-                                            color: Color.fromRGBO(11, 81, 45, .3),
+                                            color:
+                                                Color.fromRGBO(11, 81, 45, .3),
                                             blurRadius: 20,
                                             offset: Offset(0, 10),
                                           ),
@@ -167,19 +170,25 @@ class _LoginState extends State<Login> {
                                             padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                bottom: BorderSide(color: Colors.grey.shade200),
+                                                bottom: BorderSide(
+                                                    color:
+                                                        Colors.grey.shade200),
                                               ),
                                             ),
                                             child: TextFormField(
                                               controller: _emailController,
-                                              style: const TextStyle(color: Colors.black),
+                                              style: const TextStyle(
+                                                  color: Colors.black),
                                               decoration: const InputDecoration(
-                                                hintText: "Email o numero de telefono",
-                                                hintStyle: TextStyle(color: Colors.grey),
+                                                hintText:
+                                                    "Email o numero de telefono",
+                                                hintStyle: TextStyle(
+                                                    color: Colors.grey),
                                                 border: InputBorder.none,
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Por favor introduzca su correo electrónico.';
                                                 }
                                                 return null;
@@ -190,20 +199,25 @@ class _LoginState extends State<Login> {
                                             padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                bottom: BorderSide(color: Colors.grey.shade200),
+                                                bottom: BorderSide(
+                                                    color:
+                                                        Colors.grey.shade200),
                                               ),
                                             ),
                                             child: TextFormField(
                                               controller: _passwordController,
                                               obscureText: true,
-                                              style: const TextStyle(color: Colors.black),
+                                              style: const TextStyle(
+                                                  color: Colors.black),
                                               decoration: const InputDecoration(
                                                 hintText: "Contraseña",
-                                                hintStyle: TextStyle(color: Colors.grey),
+                                                hintStyle: TextStyle(
+                                                    color: Colors.grey),
                                                 border: InputBorder.none,
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Por favor, introduzca su contraseña.';
                                                 }
                                                 return null;
@@ -216,7 +230,8 @@ class _LoginState extends State<Login> {
                                   ),
                                   const SizedBox(height: 40),
                                   FadeInUp(
-                                    duration: const Duration(milliseconds: 1500),
+                                    duration:
+                                        const Duration(milliseconds: 1500),
                                     child: const Text(
                                       "Olvide mi contraseña?",
                                       style: TextStyle(color: Colors.grey),
@@ -224,11 +239,12 @@ class _LoginState extends State<Login> {
                                   ),
                                   const SizedBox(height: 40),
                                   FadeInUp(
-                                    duration: const Duration(milliseconds: 1600),
+                                    duration:
+                                        const Duration(milliseconds: 1600),
                                     child: MaterialButton(
                                       onPressed: _signIn,
                                       height: 50,
-                                      color: Colors.teal[600],
+                                      color: const Color(0xFF0b512d),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
@@ -249,16 +265,19 @@ class _LoginState extends State<Login> {
                                     children: [
                                       GestureDetector(
                                         onTap: () {
-                                          Navigator.pushNamed(context, '/register');
+                                          Navigator.pushNamed(
+                                              context, '/register');
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             color: Colors.white,
                                           ),
                                           child: Center(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'Crea tu cuenta',
                                                 style: TextStyle(

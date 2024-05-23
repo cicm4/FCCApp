@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fccapp/services/level_2/help_service.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/Level_0/user_service.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'help_button.dart';
 
@@ -220,11 +219,11 @@ class _HelpHomeState extends State<HelpHome> {
                                   const SizedBox(height: 10),
                                   ElevatedButton(
                                     onPressed: _pickFile,
-                                    child: const Text('Anexar Archivo'),
                                     style: ButtonStyle(
                                       backgroundColor: MaterialStateProperty.all(Colors.white),
-                                      foregroundColor: MaterialStateProperty.all(Color(0xFF0b512d)),
+                                      foregroundColor: MaterialStateProperty.all(const Color(0xFF0b512d)),
                                     ),
+                                    child: const Text('Anexar Archivo'),
                                   ),
                                   const SizedBox(height: 10),
                                   if (_selectedFile != null)
