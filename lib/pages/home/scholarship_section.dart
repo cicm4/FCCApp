@@ -5,7 +5,8 @@ import 'package:fccapp/services/level_2/scholarships_service.dart';
 class ScholarshipSection extends StatefulWidget {
   final DBService dbs;
   final ScholarshipService scholarshipService;
-  const ScholarshipSection({super.key, required this.dbs, required this.scholarshipService});
+  const ScholarshipSection(
+      {super.key, required this.dbs, required this.scholarshipService});
 
   @override
   State<ScholarshipSection> createState() => _ScholarshipSectionState();
@@ -38,7 +39,12 @@ class _ScholarshipSectionState extends State<ScholarshipSection> {
         const SizedBox(height: 10),
         ElevatedButton(
           onPressed: () async {
-            await Navigator.pushNamed(context, '/scholarshipsHome');
+            Navigator.pushNamed(context, '/scholarshipsHome').then((_) {
+              // This block runs when you have returned back to the 1st Page from 2nd.
+              setState(() {
+                // Call setState to refresh the page.
+              });
+            });
             setState(() {
               scholarshipStatus = widget.scholarshipService.getStatusNum();
             });

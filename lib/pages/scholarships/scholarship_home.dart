@@ -416,7 +416,7 @@ class _ScholarshipHomeState extends State<ScholarshipHome> {
               controller: TextEditingController(text: bankAccountText),
               style: const TextStyle(color: Colors.black), // Black text
               decoration: const InputDecoration(
-                labelText: 'Bank Account Number',
+                labelText: 'Numero de Cuenta Bancaria',
                 labelStyle: TextStyle(color: Colors.black), // Black label text
                 border: OutlineInputBorder(),
               ),

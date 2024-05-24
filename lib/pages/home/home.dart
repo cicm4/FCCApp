@@ -2,7 +2,6 @@ import 'package:fccapp/pages/home/help_papers_section.dart';
 import 'package:fccapp/pages/home/logout_button.dart';
 import 'package:fccapp/pages/home/profile_button.dart';
 import 'package:fccapp/pages/home/scholarship_section.dart';
-import 'package:fccapp/pages/home/test_section.dart';
 import 'package:flutter/material.dart';
 import 'package:fccapp/services/Level_0/database_service.dart';
 import 'package:fccapp/services/level_2/scholarships_service.dart';
