@@ -11,7 +11,7 @@ import 'package:fccapp/services/Level_1/db_user_service.dart';
 class FilesHome extends StatefulWidget {
   final DBUserService dus;
 
-  const FilesHome({Key? key, required this.dus}) : super(key: key);
+  const FilesHome({super.key, required this.dus});
 
   @override
   State<FilesHome> createState() => _FilesHomeState();
@@ -65,7 +65,7 @@ class _FilesHomeState extends State<FilesHome> {
 
     final String currentDate = DateTime.now().toIso8601String().split('T').first;
     page.graphics.drawString(
-      'Fecha: $currentDate\n',
+      'FECHA DE EXPEDICIÓN: $currentDate\n',
       PdfStandardFont(PdfFontFamily.helvetica, 12),
       bounds: Rect.fromLTWH(0, 60, page.getClientSize().width, 20),
     );
@@ -75,6 +75,13 @@ class _FilesHomeState extends State<FilesHome> {
       content =
           'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} es beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta la fecha.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
     } else if (certificateType == 'Certificado de Egresados') {
+      if(_userData?['endDate'] != null) {
+        content =
+            'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} fue beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta el ${_userData!['endDate']}.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
+      } else {
+        content =
+            'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} fue beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta la fecha.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
+      }
       content =
           'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} fue beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta el día $currentDate.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
     } else {

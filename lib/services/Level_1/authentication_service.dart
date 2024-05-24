@@ -154,6 +154,7 @@ class AuthService {
         'gid': gid,
         'location': location,
         'startDate': startDate,
+        'endDate': null
       };
 
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
