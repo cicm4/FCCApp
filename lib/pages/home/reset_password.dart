@@ -20,11 +20,13 @@ class _ResetPasswordHomeState extends State<ResetPasswordHome> {
       try {
         await widget.auth.sendResetPasswordEmail(_emailController.text);
         setState(() {
-          _message = 'Reset password email sent successfully.';
+          _message =
+              'Se ha enviado un correo de restablecimiento de contraseña a ${_emailController.text}';
         });
       } catch (error) {
         setState(() {
-          _message = 'Error sending reset password email: $error';
+          _message =
+              'Hubo un error al enviar el correo de restablecimiento de contraseña.';
         });
       }
     }
@@ -40,53 +42,67 @@ class _ResetPasswordHomeState extends State<ResetPasswordHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reset Password'),
-        backgroundColor: Color(0xFF0b512d), // Customize the color as needed
+        title: const Text('Olvide mi contraseña?'),
+        backgroundColor:
+            const Color(0xFF0b512d), // Customize the color as needed
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
+      body: Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(begin: Alignment.topCenter, colors: [
+          Color(0xFF0b512d),
+          Color(0xFFe6e6e3),
+        ])),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Correo Electronico',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  style: const TextStyle(
+                      color:
+                          Colors.black), // Add this line to make the text black
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese su correo electronico';
+                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                        .hasMatch(value)) {
+                      return 'Por favor ingrese un correo electronico valido';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _sendResetPasswordEmail,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, // Customize the button color as needed
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email address';
-                  }
-                  return null;
-                },
+                child: const Text('Enviar Correo'),
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendResetPasswordEmail,
-              child: Text('Reset Password'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Customize the button color as needed
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              const SizedBox(height: 20),
+              Text(
+                _message,
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              _message,
-              style: TextStyle(color: Colors.red),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

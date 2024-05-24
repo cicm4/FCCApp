@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:fccapp/pages/helps/help_list.dart';
 import 'package:fccapp/services/Level_0/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fccapp/services/level_2/help_service.dart';
@@ -42,7 +43,7 @@ class _HelpHomeState extends State<HelpHome> {
   }
 
   Future<void> _pickFile() async {
-    final result = await pickExtraFile();
+    final result = await HelpService.pickExtraFile();
     if (result != null) {
       setState(() {
         _selectedFile = result[0] as File;
@@ -252,6 +253,21 @@ class _HelpHomeState extends State<HelpHome> {
                                 if (_showLoading) ...[
                                   const CircularProgressIndicator(),
                                 ],
+                                
+                                ElevatedButton(
+                                      onPressed: () async {
+                                        //navigator to reset password
+                                        Navigator.pushNamed(context, '/helpList');
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                      ),
+                                      child: const Text(
+                                        "Mis solicitudes de ayuda",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
                               ],
                             ),
                           ),

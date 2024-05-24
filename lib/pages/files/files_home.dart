@@ -1,15 +1,17 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:fccapp/services/Level_1/db_user_service.dart';
 
 class FilesHome extends StatefulWidget {
   final DBUserService dus;
 
-  const FilesHome({super.key, required this.dus});
+  const FilesHome({Key? key, required this.dus}) : super(key: key);
 
   @override
   State<FilesHome> createState() => _FilesHomeState();
@@ -20,6 +22,7 @@ class _FilesHomeState extends State<FilesHome> {
   bool _isLoading = true;
   String _selectedCertificate = '';
   String? _userName;
+  Map<String, dynamic>? _userData;
 
   @override
   void initState() {
@@ -29,24 +32,94 @@ class _FilesHomeState extends State<FilesHome> {
 
   Future<void> _init() async {
     _userName = await widget.dus.getUserName();
+    _userData = await widget.dus.getUserData();
     if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
   }
 
-  Future<void> _createPdf(String certificateType, String userName) async {
+  Future<void> _createPdf(String certificateType) async {
+    if (_userData == null) return;
+
     final PdfDocument document = PdfDocument();
-    document.pages.add().graphics.drawString(
-      'Certificate Type: $certificateType\nUser: $userName',
+    final PdfPage page = document.pages.add();
+
+    final ByteData logoData = await rootBundle.load('assets/LOGOFCC.png');
+    final ByteData bottomInfoData = await rootBundle.load('assets/bottomInfo.png');
+    final ByteData signatureData = await rootBundle.load('assets/signature.png');
+    final List<int> logoBytes = logoData.buffer.asUint8List();
+    final List<int> bottomInfoBytes = bottomInfoData.buffer.asUint8List();
+    final List<int> signatureBytes = signatureData.buffer.asUint8List();
+
+    final PdfBitmap logoBitmap = PdfBitmap(logoBytes);
+    page.graphics.drawImage(
+      logoBitmap,
+      Rect.fromLTWH(
+        page.getClientSize().width - (logoBitmap.width * 0.2),
+        0,
+        logoBitmap.width * 0.2,
+        logoBitmap.height * 0.2,
+      ),
+    );
+
+    final String currentDate = DateTime.now().toIso8601String().split('T').first;
+    page.graphics.drawString(
+      'Fecha: $currentDate\n',
       PdfStandardFont(PdfFontFamily.helvetica, 12),
-      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
-      bounds: const Rect.fromLTWH(0, 0, 300, 20),
+      bounds: Rect.fromLTWH(0, 60, page.getClientSize().width, 20),
+    );
+
+    String content;
+    if (certificateType == 'Certificado de Permanencia') {
+      content =
+          'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} es beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta la fecha.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
+    } else if (certificateType == 'Certificado de Egresados') {
+      content =
+          'A quien pueda interesar\n\nLa fundación club campestre certifica que el señor ${_userData!['displayName']} identificado con cc ${_userData!['gid']} fue beneficiario de los programas educativos de la fundación desde el ${_userData!['startDate']} hasta el día $currentDate.\n\nAtentamente\n\n\n\n\nPaula Cristina Pérez González\nDirectora';
+    } else {
+      return;
+    }
+
+    page.graphics.drawString(
+      content,
+      PdfStandardFont(PdfFontFamily.helvetica, 12),
+      bounds: Rect.fromLTWH(0, 80, page.getClientSize().width, page.getClientSize().height - 160),
+    );
+
+    final PdfBitmap signatureBitmap = PdfBitmap(signatureBytes);
+    page.graphics.drawImage(
+      signatureBitmap,
+      Rect.fromLTWH(
+        0,
+        page.getClientSize().height - 160,
+        signatureBitmap.width.toDouble() * 0.5,
+        signatureBitmap.height.toDouble() * 0.5,
+      ),
+    );
+
+    page.graphics.drawString(
+      'Fecha: $currentDate\n',
+      PdfStandardFont(PdfFontFamily.helvetica, 12),
+      bounds: Rect.fromLTWH(0, page.getClientSize().height - 120, page.getClientSize().width, 20),
+    );
+
+    final PdfBitmap bottomInfoBitmap = PdfBitmap(bottomInfoBytes);
+    double bottomInfoWidth = page.getClientSize().width * 0.8;
+    double bottomInfoHeight = (bottomInfoWidth * bottomInfoBitmap.height) / bottomInfoBitmap.width;
+    page.graphics.drawImage(
+      bottomInfoBitmap,
+      Rect.fromLTWH(
+        (page.getClientSize().width - bottomInfoWidth) / 2,
+        page.getClientSize().height - bottomInfoHeight,
+        bottomInfoWidth,
+        bottomInfoHeight,
+      ),
     );
 
     final Directory tempDir = await getTemporaryDirectory();
     final String tempPath = tempDir.path;
-    final File file = File('$tempPath/$certificateType$userName.pdf');
+    final File file = File('$tempPath/$certificateType.pdf');
     final List<int> bytes = await document.save();
     await file.writeAsBytes(bytes);
     document.dispose();
@@ -54,6 +127,7 @@ class _FilesHomeState extends State<FilesHome> {
     if (!mounted) return;
     setState(() {
       _pdfFilePath = file.path;
+      _isLoading = false;
     });
   }
 
@@ -66,7 +140,7 @@ class _FilesHomeState extends State<FilesHome> {
           return;
         }
 
-        final String newFilePath = '${downloadsDir.path}/Certificate_$_selectedCertificate.pdf';
+        final String newFilePath = '${downloadsDir.path}/Certificate_${_selectedCertificate.replaceAll(' ', '_')}.pdf';
         final File newFile = File(newFilePath);
         await newFile.writeAsBytes(await File(_pdfFilePath!).readAsBytes());
 
@@ -91,13 +165,12 @@ class _FilesHomeState extends State<FilesHome> {
   }
 
   void selectCertificate(String certificate) async {
-    if (_userName != null) {
-      await _createPdf(certificate, _userName!);
-      if (!mounted) return;
-      setState(() {
-        _selectedCertificate = certificate;
-      });
-    }
+    setState(() {
+      _isLoading = true;
+      _selectedCertificate = certificate;
+      _pdfFilePath = null;
+    });
+    await _createPdf(certificate);
   }
 
   @override
@@ -180,7 +253,7 @@ class _FilesHomeState extends State<FilesHome> {
                                 const SizedBox(height: 20),
                                 DownloadButton(
                                   onDownload: _downloadFile,
-                                  isLoading: _selectedCertificate.isEmpty,
+                                  isLoading: _selectedCertificate.isEmpty || _isLoading,
                                 ),
                                 const SizedBox(height: 20),
                                 FilePreview(
@@ -208,10 +281,10 @@ class FileSelection extends StatelessWidget {
   final Function(String) onSelect;
 
   const FileSelection({
-    super.key,
+    Key? key,
     required this.selectedCertificate,
     required this.onSelect,
-  });
+  }) : super(key: key);
 
   Widget _buildCertificateRow(BuildContext context, String title) {
     return GestureDetector(
@@ -256,10 +329,8 @@ class FileSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildCertificateRow(context, "Certificado 1"),
-        _buildCertificateRow(context, "Certificado 2"),
-        _buildCertificateRow(context, "Certificado 3"),
-        _buildCertificateRow(context, "Certificado 4"),
+        _buildCertificateRow(context, "Certificado de Permanencia"),
+        _buildCertificateRow(context, "Certificado de Egresados"),
       ],
     );
   }
@@ -270,10 +341,10 @@ class DownloadButton extends StatelessWidget {
   final bool isLoading;
 
   const DownloadButton({
-    super.key,
+    Key? key,
     required this.onDownload,
     required this.isLoading,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -302,9 +373,9 @@ class FilePreview extends StatelessWidget {
   final String? pdfFilePath;
 
   const FilePreview({
-    super.key,
+    Key? key,
     required this.pdfFilePath,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +391,8 @@ class FilePreview extends StatelessWidget {
               enableSwipe: true,
               pageSnap: true,
               swipeHorizontal: true,
-              nightMode: true,
+              nightMode: false,
+              
             ),
     );
   }

@@ -16,11 +16,12 @@ class FilePreview extends StatelessWidget {
           ? const Center(child: Text('No file selected', style: TextStyle(fontSize: 18)))
           : PDFView(
               filePath: pdfFilePath!,
+
               autoSpacing: true,
               enableSwipe: true,
               pageSnap: true,
               swipeHorizontal: true,
-              nightMode: true,
+              nightMode: false,
             ),
     );
   }

@@ -33,6 +33,7 @@ dependencies:
   calendar_view: ^1.0.4
   cloud_firestore: ^4.12.2
   cupertino_icons: ^1.0.2
+  docx_template: ^0.4.0
   file_picker: ^6.1.1
   firebase_app_check: ^0.2.1+8
   firebase_auth: ^4.12.0

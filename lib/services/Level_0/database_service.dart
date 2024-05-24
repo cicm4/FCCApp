@@ -161,5 +161,23 @@ Future<bool> addEntryToDBWithName(
     return false;
   }
 
+
+  Future<List<Map<String, dynamic>>?> getListWithVariableFromDB({required String path, required String variable, required String value}) async {
+    try {
+      List<Map<String, dynamic>> list = [];
+      QuerySnapshot querySnapshot = await db.collection(path).where(variable, isEqualTo: value).get();
+      for (var doc in querySnapshot.docs) {
+        list.add(doc.data() as Map<String, dynamic>);
+      }
+      return list;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+        throw Exception('Error getting list: $e');
+      }
+    }
+    return null;
+  }
+
   //end of class
 }
