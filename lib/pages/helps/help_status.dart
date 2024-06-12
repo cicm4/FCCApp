@@ -4,7 +4,7 @@ import 'package:flutter/material.dart'; // Assuming you have HelpVar in a file n
 class HelpStatusPageNotList extends StatefulWidget {
   final HelpVar help;
 
-  HelpStatusPageNotList({required this.help});
+  const HelpStatusPageNotList({super.key, required this.help});
 
   @override
   _HelpStatusPageNotListState createState() => _HelpStatusPageNotListState();
@@ -48,8 +48,8 @@ class _HelpStatusPageNotListState extends State<HelpStatusPageNotList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF0b512d),
-        title: Text(
+        backgroundColor: const Color(0xFF0b512d),
+        title: const Text(
           "Detalles de Ayuda",
           style: TextStyle(
             fontFamily: 'Montserrat',
@@ -70,7 +70,7 @@ class _HelpStatusPageNotListState extends State<HelpStatusPageNotList> {
   }
 
   Widget _buildRejectedStatus() {
-    return Column(
+    return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircleAvatar(
@@ -103,8 +103,8 @@ class _HelpStatusPageNotListState extends State<HelpStatusPageNotList> {
                   radius: 20,
                   backgroundColor: _isReceived ? Colors.green : Colors.grey,
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "Recibida",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
@@ -125,8 +125,8 @@ class _HelpStatusPageNotListState extends State<HelpStatusPageNotList> {
                   radius: 20,
                   backgroundColor: _isInProcess ? Colors.green : Colors.grey,
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "En Proceso",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
@@ -147,8 +147,8 @@ class _HelpStatusPageNotListState extends State<HelpStatusPageNotList> {
                   radius: 20,
                   backgroundColor: _isCompleted ? Colors.green : Colors.grey,
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "Finalizada",
                   style: TextStyle(
                     fontFamily: 'Montserrat',

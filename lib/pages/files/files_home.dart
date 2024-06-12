@@ -288,10 +288,10 @@ class FileSelection extends StatelessWidget {
   final Function(String) onSelect;
 
   const FileSelection({
-    Key? key,
+    super.key,
     required this.selectedCertificate,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   Widget _buildCertificateRow(BuildContext context, String title) {
     return GestureDetector(
@@ -348,10 +348,10 @@ class DownloadButton extends StatelessWidget {
   final bool isLoading;
 
   const DownloadButton({
-    Key? key,
+    super.key,
     required this.onDownload,
     required this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -380,9 +380,9 @@ class FilePreview extends StatelessWidget {
   final String? pdfFilePath;
 
   const FilePreview({
-    Key? key,
+    super.key,
     required this.pdfFilePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

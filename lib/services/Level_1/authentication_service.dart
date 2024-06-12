@@ -214,6 +214,9 @@ class AuthService {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
       return true;
     } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     } catch (e) {
       return false;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class EditableProfileRow extends StatelessWidget {
   final String iconPath;
@@ -62,7 +61,7 @@ class EditableProfileRow extends StatelessWidget {
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                       decoration: BoxDecoration(
                         color: const Color(0xFF0b512d),
                         borderRadius: BorderRadius.circular(10),

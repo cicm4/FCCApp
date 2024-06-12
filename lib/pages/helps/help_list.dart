@@ -56,8 +56,8 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF0b512d),
-        title: Text(
+        backgroundColor: const Color(0xFF0b512d),
+        title: const Text(
           "Ayudas en Proceso",
           style: TextStyle(
             fontFamily: 'Montserrat',
@@ -74,15 +74,15 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
           padding: const EdgeInsets.all(16.0),
           color: Colors.white,
           child: isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : helps == null || helps!.isEmpty
-                  ? Center(child: Text('No se encontraron solicitudes de ayuda.'))
+                  ? const Center(child: Text('No se encontraron solicitudes de ayuda.'))
                   : SingleChildScrollView(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
                           columnSpacing: 20.0,
-                          columns: [
+                          columns: const [
                             DataColumn(
                               label: Text(
                                 'ID',
@@ -135,7 +135,7 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
                                     },
                                     child: Text(
                                       help.id ?? '',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: 'Montserrat',
                                         color: Color(0xFF0b512d),
                                         decoration: TextDecoration.underline,
@@ -144,11 +144,11 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
                                   ),
                                 ),
                                 DataCell(
-                                  Container(
+                                  SizedBox(
                                     width: 150,
                                     child: Text(
                                       help.message ?? '',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: 'Montserrat',
                                         color: Colors.black,
                                       ),
@@ -159,7 +159,7 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
                                 DataCell(
                                   Text(
                                     help.time ?? '',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.black,
                                     ),
@@ -168,7 +168,7 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
                                 DataCell(
                                   Text(
                                     getStatusText(help.status),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.black,
                                     ),
@@ -204,14 +204,14 @@ class _HelpsInProgressPageState extends State<HelpsInProgressPage> {
 class HelpStatusPage extends StatelessWidget {
   final HelpVar help;
 
-  HelpStatusPage({required this.help});
+  const HelpStatusPage({super.key, required this.help});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF0b512d),
-        title: Text(
+        backgroundColor: const Color(0xFF0b512d),
+        title: const Text(
           "Estado de Ayuda",
           style: TextStyle(
             fontFamily: 'Montserrat',
@@ -228,7 +228,7 @@ class HelpStatusPage extends StatelessWidget {
         color: Colors.white,
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -243,8 +243,8 @@ class HelpStatusPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
-            Center(
+            const SizedBox(height: 20),
+            const Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -290,7 +290,7 @@ class HelpStatusPage extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: isActive ? Color(0xFF0b512d) : Colors.grey,
+        color: isActive ? const Color(0xFF0b512d) : Colors.grey,
         shape: BoxShape.circle,
       ),
     );
