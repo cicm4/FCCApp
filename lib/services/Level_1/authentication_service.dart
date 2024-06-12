@@ -159,8 +159,6 @@ class AuthService {
 
       await dbs.addEntryToDBWithName(path: 'users', entry: newUser, name: uid);
 
-      await _addCalendar(uid);
-
       await _addScholarship(uid, gid);
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e);
@@ -177,16 +175,6 @@ class AuthService {
     await dbs.addEntryToDBWithName(
         path: 'scholarships', entry: scholarship, name: uid);
   }
-
-  Future<void> _addCalendar(String uid) async {
-    var newCalendar = {
-      'attendance': {},
-      'scheduledDays': [],
-    };
-    await dbs.addEntryToDBWithName(
-        path: 'calendars', entry: newCalendar, name: uid);
-  }
-
   /// Check if a user is in the database.
   ///
   /// This private method checks if a user with a specific uid is in the database.
