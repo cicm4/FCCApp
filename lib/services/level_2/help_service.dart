@@ -129,6 +129,11 @@ class HelpService {
       //parse name extension
       String extension = name.split('.').last;
       String fileName = '$id.$extension';
+      dbs.updateEntryInDB(
+        path: 'adminNotification',
+        entryID: id,
+        entry: {'file': fileName}
+      );
       bool stAddition =
           await st.addFile(file: file, data: fileName, path: 'helps/');
       if (stAddition) {

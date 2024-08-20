@@ -77,18 +77,19 @@ class DBService {
     return null;
   }
 
-/// Adds an entry to the database.
-///
-/// This function attempts to add a new entry to a specified path in the database.
-/// It requires a path and an entry as parameters. The entry parameter is expected to be a map of key-value pairs representing the document fields.
-///
-/// @param path The path in the database where the new entry will be added.
-/// @param entry A map of key-value pairs representing the document fields.
-///
-/// @return A Future that completes with a boolean. Returns true if the entry is successfully added, false otherwise.
-Future<bool> addEntryToDB(
-      {required String path,
-      required Map<String, dynamic> entry,}) async {
+  /// Adds an entry to the database.
+  ///
+  /// This function attempts to add a new entry to a specified path in the database.
+  /// It requires a path and an entry as parameters. The entry parameter is expected to be a map of key-value pairs representing the document fields.
+  ///
+  /// @param path The path in the database where the new entry will be added.
+  /// @param entry A map of key-value pairs representing the document fields.
+  ///
+  /// @return A Future that completes with a boolean. Returns true if the entry is successfully added, false otherwise.
+  Future<bool> addEntryToDB({
+    required String path,
+    required Map<String, dynamic> entry,
+  }) async {
     try {
       // Add the new document to the database
       await db.collection(path).add(entry);
@@ -104,20 +105,20 @@ Future<bool> addEntryToDB(
     return false;
   }
 
-/// Adds an entry to the database with a specific name.
-///
-/// This function attempts to add a new entry with a specific name to a specified path in the database.
-/// It requires a path, an entry, and a name as parameters. The entry parameter is expected to be a map of key-value pairs representing the document fields.
-/// The name parameter is used as the document ID for the new entry.
-///
-/// This function is similar to `addEntryToDB`, but it allows you to specify the document ID instead of having it automatically generated.
-///
-/// @param path The path in the database where the new entry will be added.
-/// @param entry A map of key-value pairs representing the document fields.
-/// @param name The document ID for the new entry.
-///
-/// @return A Future that completes with a boolean. Returns true if the entry is successfully added, false otherwise.
-Future<bool> addEntryToDBWithName(
+  /// Adds an entry to the database with a specific name.
+  ///
+  /// This function attempts to add a new entry with a specific name to a specified path in the database.
+  /// It requires a path, an entry, and a name as parameters. The entry parameter is expected to be a map of key-value pairs representing the document fields.
+  /// The name parameter is used as the document ID for the new entry.
+  ///
+  /// This function is similar to `addEntryToDB`, but it allows you to specify the document ID instead of having it automatically generated.
+  ///
+  /// @param path The path in the database where the new entry will be added.
+  /// @param entry A map of key-value pairs representing the document fields.
+  /// @param name The document ID for the new entry.
+  ///
+  /// @return A Future that completes with a boolean. Returns true if the entry is successfully added, false otherwise.
+  Future<bool> addEntryToDBWithName(
       {required String path,
       required Map<String, dynamic> entry,
       required String name}) async {
@@ -161,11 +162,14 @@ Future<bool> addEntryToDBWithName(
     return false;
   }
 
-
-  Future<List<Map<String, dynamic>>?> getListWithVariableFromDB({required String path, required String variable, required String value}) async {
+  Future<List<Map<String, dynamic>>?> getListWithVariableFromDB(
+      {required String path,
+      required String variable,
+      required String value}) async {
     try {
       List<Map<String, dynamic>> list = [];
-      QuerySnapshot querySnapshot = await db.collection(path).where(variable, isEqualTo: value).get();
+      QuerySnapshot querySnapshot =
+          await db.collection(path).where(variable, isEqualTo: value).get();
       for (var doc in querySnapshot.docs) {
         list.add(doc.data() as Map<String, dynamic>);
       }
@@ -179,5 +183,20 @@ Future<bool> addEntryToDBWithName(
     return null;
   }
 
-  //end of class
+  Future<bool> updateEntryInDB(
+      {required String path,
+      required String entryID,
+      required Map<String, dynamic> entry}) async {
+    try {
+      await db.collection(path).doc(entryID).update(entry);
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      return false;
+    }
+  }
 }
+
+  //end of class
